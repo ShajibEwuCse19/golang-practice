@@ -17,9 +17,10 @@ func display() {
 }
 
 func main() {
-	display()
+	// display()
 
 	fmt.Println("Sum of two numbers = ", sum(5,5))
 
-	var_and_data_type.VarAndDataType()
+	// variable_and_datatype.VarAndDataType()
+	variable_and_datatype.VarAndDataPractice()
 }

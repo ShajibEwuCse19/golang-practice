@@ -1,4 +1,4 @@
-package var_and_data_type
+package variable_and_datatype
 
 import "fmt"
 
