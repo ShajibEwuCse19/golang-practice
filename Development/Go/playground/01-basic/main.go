@@ -1,16 +1,25 @@
 package main
 
-import "fmt"
+import (
+	"fmt"
+	"go-practice/variable_and_datatype"
+)
 
 func sum(a int, b int) int {
 	return a + b
 }
 
-func main() {
+func display() {
 	fmt.Println("Hello Shajib")
 	fmt.Println("Hello World")
 	fmt.Println("Hello Go")
 	fmt.Println("Hello Playground")
+}
+
+func main() {
+	display()
 
 	fmt.Println("Sum of two numbers = ", sum(5,5))
+
+	var_and_data_type.VarAndDataType()
 }

@@ -1,3 +1,3 @@
-module hello-world
+module go-practice
 
 go 1.26.5

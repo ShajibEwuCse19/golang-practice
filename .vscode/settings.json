@@ -1,4 +1,10 @@
 {
   "files.autoSave": "afterDelay",
-  "files.autoSaveDelay": 1000
+  "files.autoSaveDelay": 1000,
+  "code-runner.executorMap": {
+    "go": "cd $dir && go run ."
+  },
+  "code-runner.cwd": "$dir",
+  "code-runner.runInTerminal": true,
+  "code-runner.saveFileBeforeRun": true,
 }
