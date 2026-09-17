@@ -68,5 +68,6 @@ func main() {
 	// variable_and_datatype.MainDisplayPractice2()
 	// variable_and_datatype.DisplayUserInput()
 	// variable_and_datatype.MainMethod()
-	variable_and_datatype.DisplayPointer()
+	// variable_and_datatype.DisplayPointer()
+	variable_and_datatype.DisplayComposition()
 }
