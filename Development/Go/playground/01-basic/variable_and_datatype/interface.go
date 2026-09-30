@@ -5,15 +5,15 @@ import (
 )
 
 type Speaker interface {
-	talk() string
-	Speak()
+	Talk() string 
+	Speak() 
 }
 
 type SpeakingPerson struct {
 	Name string
 }
 
-func (p SpeakingPerson) talk() string {
+func (p SpeakingPerson) Talk() string {
 	return "Hello, my name is " + p.Name
 }
 
@@ -25,7 +25,7 @@ type SpeakingDog struct {
 	Name string
 }
 
-func (d SpeakingDog) talk() string {
+func (d SpeakingDog) Talk() string {
 	return "Woof! My name is " + d.Name
 }
 
@@ -39,7 +39,7 @@ type SpeakingBird struct {
 	Name string
 }
 
-func (b SpeakingBird) talk() string {
+func (b SpeakingBird) Talk() string {
 	return "Chirp! My name is " + b.Name
 }
 
@@ -48,7 +48,7 @@ func (b SpeakingBird) Speak() {
 }
 
 func makeSpeak(s Speaker) {
-	fmt.Println(s.talk())
+	fmt.Println(s.Talk())
 	s.Speak()
 }
 
