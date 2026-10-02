@@ -5,6 +5,24 @@ import (
 	"go-practice/basic"
 )
 
+func main() {
+	// Display()
+
+	// fmt.Println("Sum of two numbers = ", sum(5,5))
+
+	// basic.VarAndDataType()
+	// basic.VarAndDataPractice()
+	// basic.MainDisplayPractice2()
+	// basic.DisplayUserInput()
+	// basic.MainMethod()
+	// basic.DisplayPointer()
+	// basic.DisplayComposition()
+	// basic.InterfaceExample()
+	// basic.ErrorHandlingExample()
+	basic.DisplayScope()
+	basic.MyFunction()
+}
+
 func sum(a int, b int) int {
 	return a + b
 }
@@ -56,20 +74,4 @@ func Display() {
 	heights["Rana"] = 5.8
 	fmt.Println("Updated Heights: ", heights)
 
-}
-
-func main() {
-	// Display()
-
-	// fmt.Println("Sum of two numbers = ", sum(5,5))
-
-	// basic.VarAndDataType()
-	// basic.VarAndDataPractice()
-	// basic.MainDisplayPractice2()
-	// basic.DisplayUserInput()
-	// basic.MainMethod()
-	// basic.DisplayPointer()
-	// basic.DisplayComposition()
-	// basic.InterfaceExample()
-	basic.ErrorHandlingExample()
 }
