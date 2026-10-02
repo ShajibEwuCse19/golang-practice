@@ -28,7 +28,8 @@ func main() {
 	// fmt.Println("Everything about function package")
 	// function.StandardFunction("Hello, Shajib")
 	// function.DisplayInitFunctionPackage()
-	function.AnonymousFunctionDisplay()
+	// function.AnonymousFunctionDisplay()
+	function.DisplayFirstOrderFunction()
 }
 
 func sum(a int, b int) int {
