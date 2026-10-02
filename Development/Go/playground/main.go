@@ -2,7 +2,8 @@ package main
 
 import (
 	"fmt"
-	"go-practice/basic"
+	// "go-practice/basic"
+	"go-practice/function"
 )
 
 func main() {
@@ -10,6 +11,7 @@ func main() {
 
 	// fmt.Println("Sum of two numbers = ", sum(5,5))
 
+	// fmt.Println("Everything about basic package")
 	// basic.VarAndDataType()
 	// basic.VarAndDataPractice()
 	// basic.MainDisplayPractice2()
@@ -21,7 +23,12 @@ func main() {
 	// basic.ErrorHandlingExample()
 	// basic.DisplayScope()
 	// basic.MyFunction()
-	basic.DisplayVariableShadowing()
+	// basic.DisplayVariableShadowing()
+
+	// fmt.Println("Everything about function package")
+	// function.StandardFunction("Hello, Shajib")
+	// function.DisplayInitFunctionPackage()
+	function.AnonymousFunctionDisplay()
 }
 
 func sum(a int, b int) int {
