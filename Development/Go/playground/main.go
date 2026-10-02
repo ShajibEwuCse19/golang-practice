@@ -19,8 +19,9 @@ func main() {
 	// basic.DisplayComposition()
 	// basic.InterfaceExample()
 	// basic.ErrorHandlingExample()
-	basic.DisplayScope()
-	basic.MyFunction()
+	// basic.DisplayScope()
+	// basic.MyFunction()
+	basic.DisplayVariableShadowing()
 }
 
 func sum(a int, b int) int {
