@@ -2,7 +2,7 @@ package main
 
 import (
 	"fmt"
-	"go-practice/variable_and_datatype"
+	"go-practice/basic"
 )
 
 func sum(a int, b int) int {
@@ -63,13 +63,13 @@ func main() {
 
 	// fmt.Println("Sum of two numbers = ", sum(5,5))
 
-	// variable_and_datatype.VarAndDataType()
-	// variable_and_datatype.VarAndDataPractice()
-	// variable_and_datatype.MainDisplayPractice2()
-	// variable_and_datatype.DisplayUserInput()
-	// variable_and_datatype.MainMethod()
-	// variable_and_datatype.DisplayPointer()
-	// variable_and_datatype.DisplayComposition()
-	// variable_and_datatype.InterfaceExample()
-	variable_and_datatype.ErrorHandlingExample()
+	// basic.VarAndDataType()
+	// basic.VarAndDataPractice()
+	// basic.MainDisplayPractice2()
+	// basic.DisplayUserInput()
+	// basic.MainMethod()
+	// basic.DisplayPointer()
+	// basic.DisplayComposition()
+	// basic.InterfaceExample()
+	basic.ErrorHandlingExample()
 }

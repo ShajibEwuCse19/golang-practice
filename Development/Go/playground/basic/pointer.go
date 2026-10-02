@@ -1,4 +1,4 @@
-package variable_and_datatype
+package basic
 
 import (
 	"fmt"
@@ -6,7 +6,7 @@ import (
 
 func DisplayPointer() {
 	age := 25
-	var ptr *int 
+	var ptr *int
 	ptr = &age
 
 	fmt.Println("Age:", age)
