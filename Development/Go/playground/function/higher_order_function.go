@@ -85,6 +85,20 @@ func DisplayFunctionInputAndOutput() {
 	= 7
 	*/
     fmt.Println("Increment twice:", result) // Prints: 7
+
+	/*
+
+	applyTwice(increment) চলল
+        │
+        ├─ operation = increment   (parameter)
+        │
+        └─ ফেরত দিল একটা নতুন function ──┐
+                                          │  এই function-এর ভেতরে
+           func(value int) int {          │  `operation` সংরক্ষিত আছে
+               return operation(operation(value))
+           }                              ┘
+
+	*/
 }
 
 /*
