@@ -30,8 +30,9 @@ func main() {
 	// function.DisplayInitFunctionPackage()
 	// function.AnonymousFunctionDisplay()
 	// function.DisplayFirstOrderFunction()
-	function.DisplayHigherOrderFunction()
-	function.DisplayFunctionInputAndOutput()
+	// function.DisplayHigherOrderFunction()
+	// function.DisplayFunctionInputAndOutput()
+	function.DisplayClosure()
 }
 
 func sum(a int, b int) int {
