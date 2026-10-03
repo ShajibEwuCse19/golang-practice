@@ -29,7 +29,9 @@ func main() {
 	// function.StandardFunction("Hello, Shajib")
 	// function.DisplayInitFunctionPackage()
 	// function.AnonymousFunctionDisplay()
-	function.DisplayFirstOrderFunction()
+	// function.DisplayFirstOrderFunction()
+	function.DisplayHigherOrderFunction()
+	function.DisplayFunctionInputAndOutput()
 }
 
 func sum(a int, b int) int {
