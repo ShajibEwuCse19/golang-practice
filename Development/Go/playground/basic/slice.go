@@ -104,7 +104,7 @@ func definitionOfASlice() {
 	nil_slice = append(nil_slice, 200, 300)
 	fmt.Println("After appending the value Nil slice =", nil_slice)
 	fmt.Println("Address of nil_slice =", &nil_slice[0])
-	fmt.Println("Capacity of nil_slice =", cap(nil_slice)) // 2 * 8 = 16, append single value increase memory 2 times. [8,16,32,64,128....]
+	fmt.Println("Capacity of nil_slice =", cap(nil_slice)) // 2 * 8 = 16, append new values increase memory 2 times. [8,16,32,64,128....]
 	fmt.Println("Length of nil_slice =", len(nil_slice)) // 7 + 2 = 9
 
 	// empty slice but not nil
