@@ -94,6 +94,19 @@ func definitionOfASlice() {
 	// fmt.Println("Capacity of nil_slice =", cap(nil_slice)) // this will give index out of range error
 	// fmt.Println("Length of nil_slice =", len(nil_slice)) // this will give index out of range error
 
+	//we can use only append()
+	nil_slice = append(nil_slice, 100, 200, 300, 4, 5, 6, 7)
+	fmt.Println("Nil slice =", nil_slice)
+	fmt.Println("Address of nil_slice =", &nil_slice[0])
+	fmt.Println("Capacity of nil_slice =", cap(nil_slice)) // 1 -> 2 -> 2 + 2 = 4 -> 4 + 2 = 6 -> 8 [append multiple elements increse memory +2 each time]
+	fmt.Println("Length of nil_slice =", len(nil_slice)) // 7
+
+	nil_slice = append(nil_slice, 200, 300)
+	fmt.Println("After appending the value Nil slice =", nil_slice)
+	fmt.Println("Address of nil_slice =", &nil_slice[0])
+	fmt.Println("Capacity of nil_slice =", cap(nil_slice)) // 2 * 8 = 16, append single value increase memory 2 times. [8,16,32,64,128....]
+	fmt.Println("Length of nil_slice =", len(nil_slice)) // 7 + 2 = 9
+
 	// empty slice but not nil
 	empty_slice := make([]int, 0)
 	fmt.Println("Empty slice =", empty_slice) // it will print [] and not [nil]
