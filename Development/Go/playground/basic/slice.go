@@ -102,3 +102,18 @@ func definitionOfASlice() {
 	fmt.Println("Length of empty_slice =", len(empty_slice)) // 0
 
 }
+
+/*
+Slice:
+1. Slice from an existing array.
+2. Slice from an existing slice.
+3. Slicing a slice.
+4. Slice Literal.
+5. Slice using make().
+6. Empty slice or nil slice.
+
+Slice has 3 property => pointer, length and capacity
+Pointer => address of the first element of the slice [lower bound]
+Length => number of elements in the slice [high-low]
+Capacity => number of elements in the underlying array [len(arr)-low]
+*/
