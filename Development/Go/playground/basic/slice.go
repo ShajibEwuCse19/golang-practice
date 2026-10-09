@@ -129,4 +129,8 @@ Slice has 3 property => pointer, length and capacity
 Pointer => address of the first element of the slice [lower bound]
 Length => number of elements in the slice [high-low]
 Capacity => number of elements in the underlying array [len(arr)-low]
+
+Slice capacity increse,
+1. 100% increse till 1024 memory space.
+2. above 1024, 25% of the current memory space will be added to the capacity.
 */
