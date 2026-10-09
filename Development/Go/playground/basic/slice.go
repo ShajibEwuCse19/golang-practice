@@ -86,4 +86,19 @@ func definitionOfASlice() {
 	fmt.Println("Capacity of slice_make =", cap(slice_make)) // capacity is 10, because in first time it takes 5 memory space, after that it takes 2 times more memory space
 	fmt.Println("Pointer of slice_make =", &slice_make) 
 	fmt.Println("Length of slice_make =", len(slice_make)) // length is 7 [append 5 new values]
+
+	// Empty slice or nil slice
+	var nil_slice []int 
+	fmt.Println("Nil slice =", nil_slice) // it will print [] and not [nil]
+	// fmt.Println("Address of nil_slice =", &nil_slice[0]) // this will give index out of range error because the slice is nil, length is 0
+	// fmt.Println("Capacity of nil_slice =", cap(nil_slice)) // this will give index out of range error
+	// fmt.Println("Length of nil_slice =", len(nil_slice)) // this will give index out of range error
+
+	// empty slice but not nil
+	empty_slice := make([]int, 0)
+	fmt.Println("Empty slice =", empty_slice) // it will print [] and not [nil]
+	// fmt.Println("Address of empty_slice =", &empty_slice[0]) // this will give index out of range error because the slice is empty, length is 0
+	fmt.Println("Capacity of empty_slice =", cap(empty_slice)) // 0
+	fmt.Println("Length of empty_slice =", len(empty_slice)) // 0
+
 }
