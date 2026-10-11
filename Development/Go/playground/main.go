@@ -2,8 +2,8 @@ package main
 
 import (
 	"fmt"
-	"go-practice/basic"
-	// "go-practice/function"
+	// "go-practice/basic"
+	"go-practice/function"
 )
 
 func main() {
@@ -18,7 +18,7 @@ func main() {
 	// basic.DisplayUserInput()
 	// basic.MainMethod()
 	// basic.DisplayPointer()
-	basic.DisplaySlice()
+	// basic.DisplaySlice()
 	// basic.DisplayComposition()
 	// basic.InterfaceExample()
 	// basic.ErrorHandlingExample()
@@ -34,6 +34,7 @@ func main() {
 	// function.DisplayHigherOrderFunction()
 	// function.DisplayFunctionInputAndOutput()
 	// function.DisplayClosure()
+	function.DisplayNamedReturnValue()
 }
 
 func sum(a int, b int) int {
