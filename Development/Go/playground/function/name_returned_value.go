@@ -114,5 +114,5 @@ Finally,
 
 According to Go,
 - Defer can update named return value
-- But Defer can not update unnamed return value
+- But Defer can not update unnamed return value. Store the return value before defer block execute. So, return the stored value. 
 */
