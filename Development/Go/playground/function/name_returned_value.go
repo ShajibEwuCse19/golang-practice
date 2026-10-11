@@ -111,4 +111,8 @@ Finally,
 পার্থক্য হচ্ছে return value-এর নিয়মে:
 - calculate()-এ result নিজেই named return variable। defer সেটিকে পরিবর্তন করতে পারে।
 - calc()-এ result সাধারণ local variable। return result-এর value আগে evaluate হয়ে যায়, তাই পরের পরিবর্তন return value-কে বদলায় না।
+
+According to Go,
+- Defer can update named return value
+- But Defer can not update unnamed return value
 */
