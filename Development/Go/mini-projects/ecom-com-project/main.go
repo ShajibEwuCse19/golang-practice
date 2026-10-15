@@ -26,9 +26,9 @@ func main() {
 
 	mux.HandleFunc("/about", aboutHandler) // route
 
-	fmt.Println("Server running on port: 3000") // starting a local server at port 3000. 
+	fmt.Println("Server running on port: 3000") 
 
-	err := http.ListenAndServe(":3000", mux)//Listen for incoming requests if server port is free.
+	err := http.ListenAndServe(":3000", mux)//Starting a local server at port 3000. Listening for incoming requests if server port is free.
 
 	if err != nil {
 		fmt.Println("Error starting the server", err) 
