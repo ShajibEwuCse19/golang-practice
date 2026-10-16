@@ -1,4 +1,4 @@
-package freeport
+package utils
 
 import (
 	"fmt"
