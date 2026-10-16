@@ -10,11 +10,6 @@ func createProduct(w http.ResponseWriter, r *http.Request) {
 	handleCors(w) 
 	handlePreFlightRequest(w, r)
 
-	if r.Method != http.MethodPost { 
-		http.Error(w, "Method not Allowed. Please send POST request.", 405)
-		return
-	}
-
 	var newProduct Product
 
 	decoder := json.NewDecoder(r.Body) 
@@ -33,12 +28,6 @@ func createProduct(w http.ResponseWriter, r *http.Request) {
 func getProducts(w http.ResponseWriter, r *http.Request) {
 	handleCors(w) 	
 	handlePreFlightRequest(w, r)
-
-	if r.Method != "GET" { 
-		http.Error(w, "Method not Allowed. Please send GET request.", 405) 
-		return
-	}
-
 	sendData(w, productList, 200)
 }
 
@@ -69,13 +58,13 @@ func handleCors(w http.ResponseWriter) {
 func main() {
 	mux := http.NewServeMux() // router (multiplexer)
 
-	mux.HandleFunc("/products", getProducts) // route (endpoint) and request handler. 
+	mux.Handle("GET /products", http.HandlerFunc(getProducts)) // route (endpoint) and request handler with explicit HTTP method (GET). 
 
-	mux.HandleFunc("/create-product", createProduct) // route (endpoint) and request handler.
+	mux.Handle("POST /create-product", http.HandlerFunc(createProduct)) // route (endpoint) and request handler with explicit HTTP method (POST).
 
-	fmt.Println("Server running on port: 3010")
+	fmt.Println("Server running on port: 8080")
 
-	err := http.ListenAndServe(":3010", mux) // starts the server on port 3001 and listen for incoming requests. 
+	err := http.ListenAndServe(":8080", mux) // starts the server on port 3010 and listen for incoming requests. 
 
 	if err != nil {
 		fmt.Println("Error starting the server", err)

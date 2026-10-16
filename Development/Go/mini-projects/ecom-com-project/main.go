@@ -60,14 +60,14 @@ func createProduct(w http.ResponseWriter, r *http.Request) { // client request t
 		return
 	}
 
+	w.WriteHeader(201) // Write the response. For success, with specific status code. Here, 201 which is a Created.
+	fmt.Fprintln(w, "Product created successfully")
+
 	// Now I need to increase the ID of the new product (from the last product's ID) as client doesn't send the ID.
 	newProduct.ID = uint8(len(productList) + 1) // current length + 1.
 
 	// Append the new product to the productList.
 	productList = append(productList, newProduct)
-
-	// send the newly created product to the client (UI).
-	sendData(w, newProduct, 201)
 }
 
 func getProducts(w http.ResponseWriter, r *http.Request) {
@@ -84,19 +84,9 @@ func getProducts(w http.ResponseWriter, r *http.Request) {
 	// Encode => Converting golang data structure to json format
 	// creating json enconder and pass writer w
 	// Task: Encode the productsList in json format and send it to the client (UI).
-	//encoder := json.NewEncoder(w) // create an encoder
-	//encoder.Encode(productList)   // encode [struct to json format] productList and pass to w in json format for sending it to the client (UI).
+	encoder := json.NewEncoder(w) // create an encoder
+	encoder.Encode(productList)   // encode [struct to json format] productList and pass to w in json format for sending it to the client (UI).
 
-	sendData(w, productList, 200)
-}
-
-func sendData(w http.ResponseWriter, data interface{}, statusCode int) { // data interface{} => it can be any type of data (int, float, struct, list etc).
-	w.WriteHeader(statusCode) // Write the response. For success, with specific status code. Here, 201 which is a Created.
-	fmt.Fprintln(w, "Product created successfully")
-
-	// show the neawly added product in the response.
-	encoder := json.NewEncoder(w)  // create an encoder to convert the struct to json
-	encoder.Encode(data)     // encode [struct to json format] newProduct and pass to w in json format for sending it to the client (UI).
 }
 
 func handlePreFlightRequest(w http.ResponseWriter, r *http.Request) {
