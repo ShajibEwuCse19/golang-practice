@@ -1,7 +1,6 @@
 package cmd
 
 import (
-	"ecom-project-improved/handlers"
 	"ecom-project-improved/middleware"
 	"ecom-project-improved/utils"
 	"fmt"
@@ -12,12 +11,11 @@ func Serve() {
 	const port = ":8080"
 	utils.FreePort(port) // Automatically check and kill any old or suspended process holding this port
 
-	mux := http.NewServeMux() // router (multiplexer)
+	mux := http.NewServeMux()                   // router (multiplexer)
+	manager := middleware.NewManager()          // create a new manager instance
+	manager.AppendMiddleware(middleware.Logger) // store all the common/global middlewares here
 
-	mux.Handle("GET /products", middleware.Logger(http.HandlerFunc(handlers.GetProducts)))           // route (endpoint) and request handler with explicit HTTP method (GET).
-	mux.Handle("POST /create-product", middleware.Logger(http.HandlerFunc(handlers.CreateProduct)))  // route
-	mux.Handle("GET /products/{id}", middleware.Logger(http.HandlerFunc(handlers.GetProductById)))   // route
-	mux.Handle("DELETE /products/{id}", middleware.Logger(http.HandlerFunc(handlers.DeleteProduct))) // route
+	initRoutes(mux, manager)
 
 	// here, mux.Handle expects a pattern and a http.Handler. So, I have created a middleware for handle CORS error and OPTION requests
 	// The, GlobalRouterMiddleware checks all CORS related errors and finally return a http.Handler. So I passed it to mux.Handle. This is how middleware works in golang.
