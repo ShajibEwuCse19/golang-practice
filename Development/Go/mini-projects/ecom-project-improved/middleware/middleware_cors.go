@@ -6,10 +6,10 @@ import (
 
 func HandleCorsMiddleware(next http.Handler) http.Handler {
 	handleCors := func(w http.ResponseWriter, r *http.Request) {
-		handleCors(w)
-		handlePreFlightRequest(w, r)
+		handleCors(w) // check permission for all header
+		handlePreFlightRequest(w, r) // permission granted
 
-		next.ServeHTTP(w, r)
+		next.ServeHTTP(w, r) // now serve the request from the handler
 	}
 
 	corsHandler := http.HandlerFunc(handleCors)
