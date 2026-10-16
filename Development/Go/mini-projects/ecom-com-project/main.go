@@ -65,6 +65,14 @@ func createProduct(w http.ResponseWriter, r *http.Request) { // client request t
 	w.Header().Set("Access-Control-Allow-Origin", "*") // call from any website, frontend - allow
 	w.Header().Set("Content-Type", "application/json") // content will be json format
 
+	// OPTIONS method used for PreFlight requests - which is a CORS mechanism. 
+	// No r.Body for PreFlight request(OPTIONS Method).
+	// Client (browser - React App) add some options that must need to check and allow from the server. 
+	if r.Method == http.MethodOptions  {
+		w.WriteHeader(http.StatusOK) // return 200 OK for options request. [CORS support] for allow all permission for client request.
+		return
+	}
+
 	if r.Method != http.MethodPost { // must be POST method to create a new product
 		http.Error(w, "Method not Allowed. Please send POST request.", 405)
 		return
