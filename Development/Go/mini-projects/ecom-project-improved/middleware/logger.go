@@ -45,7 +45,7 @@ func (h MyHandler) ServeHTTP(
 ) {
     fmt.Fprintln(w, "Hello")
 }
-এখন MyHandler-এর ServeHTTP method আছে। তাই MyHandler http.Handler interface implement করে।
+এখন MyHandler-এর ServeHTTP method আছে। তাই MyHandler http.Handler interface implement করে। So, MyHandler == http.Handler.
 
 => http.HandlerFunc কী?
 net/http package-এ এর definition:
