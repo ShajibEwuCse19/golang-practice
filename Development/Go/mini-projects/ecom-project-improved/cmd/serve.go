@@ -12,8 +12,8 @@ func Serve() {
 	utils.FreePort(port) // Automatically check and kill any old or suspended process holding this port
 
 	mux := http.NewServeMux()                   // router (multiplexer)
-	manager := middleware.NewManager()          // create a new manager instance
-	manager.AppendMiddleware(middleware.Logger) // store all the common/global middlewares here
+	manager := middleware.NewManager()          // create a new manager instance where initialized with an empty slice of global middlewares
+	manager.AppendGlobalMiddlewares(middleware.Logger) // store all the common/global middlewares here
 
 	initRoutes(mux, manager)
 

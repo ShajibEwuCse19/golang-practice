@@ -11,38 +11,43 @@ import (
 type Middleware func(http.Handler) http.Handler
 
 type Manager struct { // struct for manager
-	globalMiddlewares []Middleware // list of middlewares used with similar signature inside whole project will be stored here.
+	globalMiddlewares []Middleware // list of Middleware (which is a function).
 }
 
-// NewManager is a constructor function that creates and returns a pointer to a new Manager struct
-// Without return pointer => we need to return a new Manager struct object, so it will be copied. So it will be heavy and inefficient.
-func NewManager() *Manager {
+// Why NewManager Constructor is used?
+//- Before using the Manager, we will call NewManager() for initialize empty slice for globalMiddlewares
+func NewManager() *Manager { // initialize globalMiddlewares
 	return &Manager{ // returns a pointer of new instance of Manager struct
 		globalMiddlewares: make([]Middleware, 0),
 	}
 }
 
-// We can append middlewares like a chain with the use of this method.
-// So that, we can use these middlewares in multiple places.
-func (m *Manager) AppendMiddleware(middlewares ...Middleware) {
+// Append all the mws in the mw global list
+func (m *Manager) AppendGlobalMiddlewares(middlewares ...Middleware) { // 
 	m.globalMiddlewares = append(m.globalMiddlewares, middlewares...)
 }
 
-// Now, I'll create a receiver method for this Manager struct.
-func (m *Manager) AddMiddleware(next http.Handler, middlewares ...Middleware) http.Handler { // ... is used to pass variadic arguments. which means we can pass 0 or list of arguments.
-	handler := next
-	// []middlewares = [Logger, GlobalRouterMiddleware, etc. whose signature is Middleware=func(http.Handler) http.Handler]
-	// n = middleware.Logger(http.HandlerFunc(handlers.GetProducts))
-	for _, mw := range middlewares {
-		handler = mw(handler)
-	}
+/*
+এটি নিশ্চিত করে যে স্লাইসে আপনি যেভাবে লিখবেন:
+manager.AppendMiddleware(RecoverPanic, Logger, CORS)
+রিকোয়েস্ট ঠিক সেভাবেই প্রথমে RecoverPanic $\to$ তারপর Logger $\to$ তারপর CORS পার হয়ে মূল হ্যান্ডলারে পৌঁছাবে।
+*/
 
-	// wrap all the global middlewares => mw1(mw2(mw3(...(http.HandlerFunc(handlers.GetProducts)))))
-	for _, mw := range m.globalMiddlewares {
-		handler = mw(handler)
-	}
+//Wrap all the middlewares in the handler.
+func (m *Manager) AddMiddleware(next http.Handler, middlewares ...Middleware) http.Handler {
+    handler := next
 
-	return handler // return the final handler
+    // ১. Route Specific Middlewares রিভার্স অর্ডারে র‍্যাপ করা
+    for i := len(middlewares) - 1; i >= 0; i-- {
+        handler = middlewares[i](handler) // mw[i] means middleware (which is a function) at index i and mw[i](handler) means applying that middleware to the handler
+    }
+
+    // ২. Global Middlewares রিভার্স অর্ডারে র‍্যাপ করা
+    for i := len(m.globalMiddlewares) - 1; i >= 0; i-- {
+        handler = m.globalMiddlewares[i](handler)
+    }
+
+    return handler
 }
 
 /*
