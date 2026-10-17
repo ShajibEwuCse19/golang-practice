@@ -4,11 +4,10 @@ import (
 	"net/http"
 )
 
-func CorsWithPreflight(next http.Handler) http.Handler {
+func Cors(next http.Handler) http.Handler {
 	return http.HandlerFunc(
 		func(w http.ResponseWriter, r *http.Request) {
 			handleCors(w)
-			handlePreFlightRequest(w, r)
 			next.ServeHTTP(w, r)
 		},
 	)
@@ -21,11 +20,4 @@ func handleCors(w http.ResponseWriter) {
 	w.Header().Set("Access-Control-Allow-Headers", "Content-Type, Authorization")
 	w.Header().Set("Access-Control-Max-Age", "600")
 	w.Header().Set("Access-Control-Allow-Credentials", "true")
-}
-
-func handlePreFlightRequest(w http.ResponseWriter, r *http.Request) {
-	if r.Method == http.MethodOptions {
-		w.WriteHeader(http.StatusOK)
-		return
-	}
 }

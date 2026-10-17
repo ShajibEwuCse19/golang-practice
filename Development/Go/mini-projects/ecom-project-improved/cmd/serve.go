@@ -11,12 +11,14 @@ func Serve() {
 	const port = ":8080"
 	utils.FreePort(port) // Automatically check and kill any old or suspended process holding this port
 
-	manager := middleware.NewManager()                                               // create a new manager instance where initialized with an empty slice of global middlewares
-	manager.AppendGlobalMiddlewares(middleware.CorsWithPreflight, middleware.Logger) // store all the common/global middlewares here
-	
-	mux := http.NewServeMux()                                                        // router (multiplexer)
+	manager := middleware.NewManager() // create a new manager instance where initialized with an empty slice of global middlewares
+	manager.AppendGlobalMiddlewares(
+		middleware.Cors,
+		middleware.Preflight,
+		middleware.Logger,
+	) // store all the common/global middlewares here
 
-	initRoutes(mux, manager)
+	mux := http.NewServeMux() // router (multiplexer)
 
 	fmt.Println("Server running on port: 8080")
 
@@ -24,9 +26,11 @@ func Serve() {
 	// As, OPTION method has no handler, it will reject the request and browser will show Preflight error.
 	// err := http.ListenAndServe(":8080", mux) // starts the server on port 3010 and listen for incoming requests.
 
-	// Here is the solution of the problem: CorsWithPreflight(Logger(mux))
+	// Here is the solution of the problem: Cors(Preflight(Logger(mux)))
 	wrapperMux := manager.WrapMuxWithGlobalMiddleware(mux) // added mux with mw before server connection
-	err := http.ListenAndServe(":8080", wrapperMux) // bind the server port 8080 with wrapperMux[CorsWithPreflight(Logger(mux))]
+	initRoutes(mux, manager)
+
+	err := http.ListenAndServe(":8080", wrapperMux)                                                         // bind the server port 8080 with wrapperMux[CorsWithPreflight(Logger(mux))]
 	if err != nil {
 		fmt.Println("Error starting the server", err)
 	}

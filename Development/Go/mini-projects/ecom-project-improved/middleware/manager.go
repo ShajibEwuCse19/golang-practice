@@ -39,13 +39,13 @@ func (m *Manager) WrapMuxWithGlobalMiddleware(next http.Handler, middlewares ...
 	handler := next
 
 	// Global Middlewares রিভার্স অর্ডারে র‍্যাপ করা
-	// globalMiddlewares[CorsWithPreflight, Logger]
+	// globalMiddlewares[Cors, Preflight, Logger]
 	for i := len(m.globalMiddlewares) - 1; i >= 0; i-- {
 		handler = m.globalMiddlewares[i](handler)
-	} //CorsWithPreflight(Logger(handler))
-	// CorsWithPreflight Will apply first, then return handler to Logger() and finally handler to the original handler
+	} 
+	// CorsWill apply first, then return handler to Preflight() and finally handler to the original handler
 
-	return handler // CorsWithPreflight(Logger(mux)) // in this case mux is 'handler'
+	return handler // Cors(Preflight(Logger(handler)) // in this case mux is 'handler'
 }
 
 
