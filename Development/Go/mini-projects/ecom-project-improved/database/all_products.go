@@ -1,6 +1,43 @@
 package database
 
-var ProductList []Product
+var productList []Product
+
+func Store(p Product) {
+	productList = append(productList, p)
+}
+
+func List() []Product {
+	return productList
+}
+
+func GetProductById(id uint8) *Product {
+	for _, prd := range productList {
+		if prd.ID == id {
+			return &prd
+		}
+	}
+	return nil
+}
+
+func DeleteProduct(id uint8) {
+	for idx, prd := range productList {
+		if prd.ID == id {
+			productList = append(productList[:idx], productList[idx+1:]...)
+			return
+		}
+	}
+}
+
+func UpdateProduct(p Product) {
+	for idx, prd := range productList {
+		if prd.ID == p.ID {
+			productList[idx] = p
+			return
+		}
+	}
+}
+
+	
 
 func init() {
 	prd1 := Product{
@@ -39,5 +76,6 @@ func init() {
 		ImgURL:      "https://www.mangoimage.com/imgMango.png",
 	}
 
-	ProductList = append(ProductList, prd1, prd2, prd3, prd4, prd5)
+	productList = append(productList, prd1, prd2, prd3, prd4, prd5)
 }
+
