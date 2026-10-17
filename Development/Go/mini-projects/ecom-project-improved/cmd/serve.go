@@ -13,13 +13,9 @@ func Serve() {
 
 	mux := http.NewServeMux()                   // router (multiplexer)
 	manager := middleware.NewManager()          // create a new manager instance where initialized with an empty slice of global middlewares
-	manager.AppendGlobalMiddlewares(middleware.Logger) // store all the common/global middlewares here
+	manager.AppendGlobalMiddlewares(middleware.CorsWithPreflight, middleware.Logger) // store all the common/global middlewares here
 
 	initRoutes(mux, manager)
-
-	// here, mux.Handle expects a pattern and a http.Handler. So, I have created a middleware for handle CORS error and OPTION requests
-	// The, GlobalRouterMiddleware checks all CORS related errors and finally return a http.Handler. So I passed it to mux.Handle. This is how middleware works in golang.
-	middleware.GlobalRouterMiddleware(mux)
 
 	fmt.Println("Server running on port: 8080")
 

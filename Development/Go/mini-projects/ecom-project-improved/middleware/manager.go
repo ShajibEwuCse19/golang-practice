@@ -15,7 +15,7 @@ type Manager struct { // struct for manager
 }
 
 // Why NewManager Constructor is used?
-//- Before using the Manager, we will call NewManager() for initialize empty slice for globalMiddlewares
+// - Before using the Manager, we will call NewManager() for initialize empty slice for globalMiddlewares
 func NewManager() *Manager { // initialize globalMiddlewares
 	return &Manager{ // returns a pointer of new instance of Manager struct
 		globalMiddlewares: make([]Middleware, 0),
@@ -23,7 +23,7 @@ func NewManager() *Manager { // initialize globalMiddlewares
 }
 
 // Append all the mws in the mw global list
-func (m *Manager) AppendGlobalMiddlewares(middlewares ...Middleware) { // 
+func (m *Manager) AppendGlobalMiddlewares(middlewares ...Middleware) { //
 	m.globalMiddlewares = append(m.globalMiddlewares, middlewares...)
 }
 
@@ -33,21 +33,23 @@ manager.AppendMiddleware(RecoverPanic, Logger, CORS)
 রিকোয়েস্ট ঠিক সেভাবেই প্রথমে RecoverPanic $\to$ তারপর Logger $\to$ তারপর CORS পার হয়ে মূল হ্যান্ডলারে পৌঁছাবে।
 */
 
-//Pass next handler in all the Middlewares one by one and wrap them.
+// Pass next handler in all the Middlewares one by one and wrap them.
 func (m *Manager) AddMiddleware(next http.Handler, middlewares ...Middleware) http.Handler {
-    handler := next
+	handler := next
 
-    // ১. Route Specific Middlewares রিভার্স অর্ডারে র‍্যাপ করা
-    for i := len(middlewares) - 1; i >= 0; i-- {
-        handler = middlewares[i](handler) // mw[i] means middleware (which is a function) at index i and mw[i](handler) means applying that middleware to the handler
-    }
+	// ১. Route Specific Middlewares রিভার্স অর্ডারে র‍্যাপ করা
+	for i := len(middlewares) - 1; i >= 0; i-- {
+		handler = middlewares[i](handler) // mw[i] means middleware (which is a function) at index i and mw[i](handler) means applying that middleware to the handler
+	}
 
-    // ২. Global Middlewares রিভার্স অর্ডারে র‍্যাপ করা
-    for i := len(m.globalMiddlewares) - 1; i >= 0; i-- {
-        handler = m.globalMiddlewares[i](handler)
-    }
+	// ২. Global Middlewares রিভার্স অর্ডারে র‍্যাপ করা
+	// globalMiddlewares[CorsWithPreflight, Logger]
+	for i := len(m.globalMiddlewares) - 1; i >= 0; i-- {
+		handler = m.globalMiddlewares[i](handler)
+	} //CorsWithPreflight(Logger(handler))
+	// CorsWithPreflight Will apply first, then return handler to Logger() and finally handler to the original handler
 
-    return handler
+	return handler
 }
 
 /*
@@ -60,7 +62,7 @@ func (m *Manager) AddMiddleware(next http.Handler, middlewares ...Middleware) ht
 /*
 Summary of the code:
 --------------------
-type Middleware func(http.Handler) http.Handler -> create a Middleware type (function) which has same signature with http.Handler interface and all the middlewares in the project. 
+type Middleware func(http.Handler) http.Handler -> create a Middleware type (function) which has same signature with http.Handler interface and all the middlewares in the project.
 struct Manager -> create a struct for manager where list of []Middleware are stored
 NewManager() -> initialize empty slice for globalMiddlewares
 manager.AppendGlobalMiddlewares(middlewares...) -> append all the middlewares in the global list
