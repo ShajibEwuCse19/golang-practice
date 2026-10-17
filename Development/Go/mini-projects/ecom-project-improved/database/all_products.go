@@ -1,9 +1,18 @@
 package database
 
-var productList []Product
+import "sync"
+
+var (
+    productList []Product
+    mu          sync.Mutex 
+)
 
 func Store(p Product) {
-	productList = append(productList, p)
+	p.ID = uint8(len(productList) + 1)
+    mu.Lock()         
+    defer mu.Unlock() 
+
+    productList = append(productList, p)
 }
 
 func List() []Product {
