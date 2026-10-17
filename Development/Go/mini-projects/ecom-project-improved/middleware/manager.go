@@ -33,7 +33,7 @@ manager.AppendMiddleware(RecoverPanic, Logger, CORS)
 রিকোয়েস্ট ঠিক সেভাবেই প্রথমে RecoverPanic $\to$ তারপর Logger $\to$ তারপর CORS পার হয়ে মূল হ্যান্ডলারে পৌঁছাবে।
 */
 
-//Wrap all the middlewares in the handler.
+//Pass next handler in all the Middlewares one by one and wrap them.
 func (m *Manager) AddMiddleware(next http.Handler, middlewares ...Middleware) http.Handler {
     handler := next
 
@@ -55,4 +55,14 @@ func (m *Manager) AddMiddleware(next http.Handler, middlewares ...Middleware) ht
       = mw1(mw2(Logger(http.HandlerFunc(handlers.GetProducts))))
 	  = mw1(AuthMiddleware(Logger(http.HandlerFunc(handlers.GetProducts))))
 	  = GlobalRouterMiddleware(AuthMiddleware(Logger(http.HandlerFunc(handlers.GetProducts))))
+*/
+
+/*
+Summary of the code:
+--------------------
+type Middleware func(http.Handler) http.Handler -> create a Middleware type (function) which has same signature with http.Handler interface and all the middlewares in the project. 
+struct Manager -> create a struct for manager where list of []Middleware are stored
+NewManager() -> initialize empty slice for globalMiddlewares
+manager.AppendGlobalMiddlewares(middlewares...) -> append all the middlewares in the global list
+manager.AddMiddleware(next, middlewares...) -> Pass next handler in all the Middlewares one by one and wrap them.
 */
