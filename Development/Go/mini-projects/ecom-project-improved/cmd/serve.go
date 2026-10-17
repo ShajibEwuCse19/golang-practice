@@ -1,16 +1,14 @@
 package cmd
 
 import (
+	"ecom-project-improved/config"
 	"ecom-project-improved/middleware"
-	"ecom-project-improved/utils"
 	"fmt"
 	"net/http"
+	"strconv"
 )
 
 func Serve() {
-	const port = ":8080"
-	utils.FreePort(port) // Automatically check and kill any old or suspended process holding this port
-
 	manager := middleware.NewManager() // create a new manager instance where initialized with an empty slice of global middlewares
 	manager.AppendGlobalMiddlewares(
 		middleware.Cors,
@@ -30,7 +28,7 @@ func Serve() {
 	wrapperMux := manager.WrapMuxWithGlobalMiddleware(mux) // added mux with mw before server connection
 	initRoutes(mux, manager)
 
-	err := http.ListenAndServe(":8080", wrapperMux)                                                         // bind the server port 8080 with wrapperMux[CorsWithPreflight(Logger(mux))]
+	err := http.ListenAndServe(":"+strconv.Itoa(config.GetConfig().HttpPort), wrapperMux)                                                         // bind the server port 8080 with wrapperMux[CorsWithPreflight(Logger(mux))]
 	if err != nil {
 		fmt.Println("Error starting the server", err)
 	}
