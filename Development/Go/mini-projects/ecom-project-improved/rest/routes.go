@@ -1,12 +1,12 @@
-package cmd
+package rest
 
 import (
-	"ecom-project-improved/handlers"
-	"ecom-project-improved/middleware"
+	"ecom-project-improved/rest/handlers"
+	"ecom-project-improved/rest/middleware"
 	"net/http"
 )
 
-func initRoutes(mux *http.ServeMux, manager *middleware.Manager) {
+func InitRoutes(mux *http.ServeMux, manager *middleware.Manager) {
 	mux.Handle(
 		"GET /products",
 		manager.AddMiddleware(

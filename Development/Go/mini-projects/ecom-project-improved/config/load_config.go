@@ -4,7 +4,6 @@ import (
 	"log"
 	"os"
 	"strconv"
-
 	"github.com/lpernett/godotenv"
 )
 

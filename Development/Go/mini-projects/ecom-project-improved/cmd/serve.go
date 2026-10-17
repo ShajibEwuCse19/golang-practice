@@ -2,7 +2,8 @@ package cmd
 
 import (
 	"ecom-project-improved/config"
-	"ecom-project-improved/middleware"
+	"ecom-project-improved/rest"
+	"ecom-project-improved/rest/middleware"
 	"fmt"
 	"net/http"
 	"strconv"
@@ -26,9 +27,9 @@ func Serve() {
 
 	// Here is the solution of the problem: Cors(Preflight(Logger(mux)))
 	wrapperMux := manager.WrapMuxWithGlobalMiddleware(mux) // added mux with mw before server connection
-	initRoutes(mux, manager)
+	rest.InitRoutes(mux, manager)
 
-	err := http.ListenAndServe(":"+strconv.Itoa(config.GetConfig().HttpPort), wrapperMux)                                                         // bind the server port 8080 with wrapperMux[CorsWithPreflight(Logger(mux))]
+	err := http.ListenAndServe(":"+strconv.Itoa(config.GetConfig().HttpPort), wrapperMux) // bind the server port 8080 with wrapperMux[CorsWithPreflight(Logger(mux))]
 	if err != nil {
 		fmt.Println("Error starting the server", err)
 	}
