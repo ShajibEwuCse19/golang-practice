@@ -24,6 +24,7 @@ func Logger(next http.Handler) http.Handler { //input next middleware's expected
 }
 /*
 => Logger()-এর return type http.Handler, কিন্তু আমরা return করছি http.HandlerFunc। তাহলে type mismatch হচ্ছে না কেন?
+Short ans: http.HandlerFunc implement http.Handler interface, ServeHTTP. So, http.HandlerFunc == http.Handler.
 Answer: http.HandlerFunc হলো এমন একটি named function type, যা http.Handler interface implement করে। 
 তাই http.HandlerFunc-এর value-কে http.Handler হিসেবে return করা যায়।
 
