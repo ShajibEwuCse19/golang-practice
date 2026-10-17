@@ -34,22 +34,30 @@ manager.AppendMiddleware(RecoverPanic, Logger, CORS)
 */
 
 // Pass next handler in all the Middlewares one by one and wrap them.
-func (m *Manager) AddMiddleware(next http.Handler, middlewares ...Middleware) http.Handler {
+
+func (m *Manager) WrapMuxWithGlobalMiddleware(next http.Handler, middlewares ...Middleware) http.Handler {
 	handler := next
 
-	// ১. Route Specific Middlewares রিভার্স অর্ডারে র‍্যাপ করা
-	for i := len(middlewares) - 1; i >= 0; i-- {
-		handler = middlewares[i](handler) // mw[i] means middleware (which is a function) at index i and mw[i](handler) means applying that middleware to the handler
-	}
-
-	// ২. Global Middlewares রিভার্স অর্ডারে র‍্যাপ করা
+	// Global Middlewares রিভার্স অর্ডারে র‍্যাপ করা
 	// globalMiddlewares[CorsWithPreflight, Logger]
 	for i := len(m.globalMiddlewares) - 1; i >= 0; i-- {
 		handler = m.globalMiddlewares[i](handler)
 	} //CorsWithPreflight(Logger(handler))
 	// CorsWithPreflight Will apply first, then return handler to Logger() and finally handler to the original handler
 
-	return handler
+	return handler // CorsWithPreflight(Logger(mux)) // in this case mux is 'handler'
+}
+
+
+func (m *Manager) AddMiddleware(next http.Handler, middlewares ...Middleware) http.Handler {
+	handler := next
+
+	// Route Specific Middlewares রিভার্স অর্ডারে র‍্যাপ করা
+	for i := len(middlewares) - 1; i >= 0; i-- {
+		handler = middlewares[i](handler) // mw[i] means middleware (which is a function) at index i and mw[i](handler) means applying that middleware to the handler
+	}
+
+	return handler // DummyMiddleware(http.HandlerFunc(handlers.GetProducts))
 }
 
 /*
