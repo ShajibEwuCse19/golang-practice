@@ -22,10 +22,11 @@ func Logger(next http.Handler) http.Handler { //input next middleware's expected
 		},
 	)
 }
+
 /*
 => Logger()-এর return type http.Handler, কিন্তু আমরা return করছি http.HandlerFunc। তাহলে type mismatch হচ্ছে না কেন?
 Short ans: http.HandlerFunc implement http.Handler interface, ServeHTTP. So, http.HandlerFunc == http.Handler.
-Answer: http.HandlerFunc হলো এমন একটি named function type, যা http.Handler interface implement করে। 
+Answer: http.HandlerFunc হলো এমন একটি named function type, যা http.Handler interface implement করে।
 তাই http.HandlerFunc-এর value-কে http.Handler হিসেবে return করা যায়।
 
 => http.Handler আসলে কী?
@@ -34,7 +35,7 @@ Go-এর net/http package-এ http.Handler হলো একটি interface।
 type Handler interface {
     ServeHTTP(ResponseWriter, *Request)
 }
-এই interface বলছে: যে type-এর ServeHTTP(http.ResponseWriter, *http.Request) method আছে [same signature], 
+এই interface বলছে: যে type-এর ServeHTTP(http.ResponseWriter, *http.Request) method আছে [same signature],
 সেই type http.Handler interface implement করতে পারে।
 
 Example:
@@ -68,6 +69,6 @@ func (f HandlerFunc) ServeHTTP(w http.ResponseWriter, r *http.Request) {
 Summary:
 http.Handler = একটি interface, যার একটি method ServeHTTP() আছে।
 http.HandlerFunc = একটি function type, যা http.Handler interface implement করে।
-Logger() → http.Handler return করে (handler → handler → handler → handler) 
-হিসেবে। 
-*/ 
+Logger() → http.Handler return করে (handler → handler → handler → handler)
+হিসেবে।
+*/
