@@ -16,13 +16,10 @@ func GetProductById(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	// search the product in the database using the ID
-	for _, product := range database.ProductList { 
-		if id == int(product.ID) {
-			utils.SendData(w, product, http.StatusOK) // if found, send the product
-			return
-		}
+	data := database.GetProductById(uint8(id))
+	if data == nil {
+		utils.SendData(w, "No products found", http.StatusBadRequest)
+		return
 	}
-
-	utils.SendData(w, "Invalid product ID", http.StatusBadRequest) // if not found, send the error
+	utils.SendData(w, data, 200)
 }
