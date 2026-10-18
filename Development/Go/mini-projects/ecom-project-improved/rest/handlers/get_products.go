@@ -7,5 +7,10 @@ import (
 )
 
 func GetProducts(w http.ResponseWriter, r *http.Request) {
-	utils.SendData(w, database.ProductList, 200)
+	data := database.List()
+	if data == nil {
+		utils.SendData(w, "No products found", 404)
+		return
+	}
+	utils.SendData(w, data, 200)
 }
