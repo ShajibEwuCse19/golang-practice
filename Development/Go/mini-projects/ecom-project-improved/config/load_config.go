@@ -7,7 +7,7 @@ import (
 	"github.com/lpernett/godotenv"
 )
 
-var configuration Config
+var configuration *Config
 
 func loadConfig() {
 	err := godotenv.Load()
@@ -29,7 +29,7 @@ func loadConfig() {
 		os.Exit(1)
 	}
 
-	configuration = Config{
+	configuration = &Config{
 		Version:      version,
 		ServiceName:  serviceName,
 		HttpPort:     httpPort,
@@ -38,6 +38,8 @@ func loadConfig() {
 }
 
 func GetConfig() *Config {
-	loadConfig()
-	return &configuration
+	if configuration == nil {
+		loadConfig() //load only one time
+	}
+	return configuration
 }
