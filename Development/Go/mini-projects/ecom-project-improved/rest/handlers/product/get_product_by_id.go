@@ -1,7 +1,6 @@
 package product
 
 import (
-	"ecom-project-improved/database"
 	"ecom-project-improved/utils"
 	"net/http"
 	"strconv"
@@ -16,7 +15,11 @@ func (h *Handler) GetProductById(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	data := database.GetProductById(uint8(id))
+	data,err := h.producRepo.Get(uint8(id))
+	if err != nil {
+		http.Error(w, "Internal Server Error", http.StatusInternalServerError)
+		return
+	}
 	if data == nil {
 		utils.SendData(w, "No products found", http.StatusBadRequest)
 		return

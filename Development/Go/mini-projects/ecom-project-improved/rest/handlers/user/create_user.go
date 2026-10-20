@@ -1,17 +1,25 @@
 package user
 
-
 import (
-	"ecom-project-improved/database"
+	"ecom-project-improved/repo"
 	"ecom-project-improved/utils"
 	"encoding/json"
 	"fmt"
 	"net/http"
 )
 
+type User struct {
+	ID          uint8  `json:"id"`
+	FirstName   string `json:"first_name"`
+	LastName    string `json:"last_name"`
+	Email       string `json:"email"`
+	Password    string `json:"password"`
+	IsShopOwner bool   `json:"is_shop_owner"`
+}
+
 func (h *Handler) CreateUser(w http.ResponseWriter, r *http.Request){
-	var newUser database.User // instance/object of database User struct
-	decoder := json.NewDecoder(r.Body) // decode user info
+	var newUser User 
+	decoder := json.NewDecoder(r.Body) 
 	err := decoder.Decode(&newUser)
 
 	if err != nil {
@@ -25,7 +33,17 @@ func (h *Handler) CreateUser(w http.ResponseWriter, r *http.Request){
 		return
 	}
 
-	createdUser := newUser.Store() // created new user and store 
+	createdUser, err := h.userRepo.Create(repo.User{
+		FirstName:   newUser.FirstName,
+		LastName:    newUser.LastName,
+		Email:       newUser.Email,
+		Password:    newUser.Password,
+		IsShopOwner: newUser.IsShopOwner,
+	})
+	if err != nil {
+		http.Error(w, "Internal Server Error", http.StatusInternalServerError)
+		return
+	}
+
 	utils.SendData(w, createdUser, http.StatusCreated)
-	
 }
