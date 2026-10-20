@@ -20,6 +20,7 @@ func InitRoutes(mux *http.ServeMux, manager *middleware.Manager) {
 		manager.AddMiddleware(
 			http.HandlerFunc(handlers.CreateProduct),
 			middleware.DummyMiddleware,
+			middleware.JwtAuthMiddleware,
 		),
 	)
 
