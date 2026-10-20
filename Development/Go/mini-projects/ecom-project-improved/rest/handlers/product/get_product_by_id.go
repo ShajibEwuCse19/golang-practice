@@ -1,13 +1,12 @@
-package handlers
+package product
 
 import (
-	"ecom-project-improved/database"
 	"ecom-project-improved/utils"
 	"net/http"
 	"strconv"
 )
 
-func GetProductById(w http.ResponseWriter, r *http.Request) {
+func (h *Handler) GetProductById(w http.ResponseWriter, r *http.Request) {
 	productId := r.PathValue("id") //get the product ID from the URL parameters
 	id, err := strconv.Atoi(productId) // convert the product ID from string to int
 
@@ -16,7 +15,11 @@ func GetProductById(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	data := database.GetProductById(uint8(id))
+	data,err := h.producRepo.Get(uint8(id))
+	if err != nil {
+		http.Error(w, "Internal Server Error", http.StatusInternalServerError)
+		return
+	}
 	if data == nil {
 		utils.SendData(w, "No products found", http.StatusBadRequest)
 		return
