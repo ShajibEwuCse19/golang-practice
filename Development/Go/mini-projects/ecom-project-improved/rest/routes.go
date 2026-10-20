@@ -1,12 +1,12 @@
-package cmd
+package rest
 
 import (
-	"ecom-project-improved/handlers"
-	"ecom-project-improved/middleware"
+	"ecom-project-improved/rest/handlers"
+	"ecom-project-improved/rest/middleware"
 	"net/http"
 )
 
-func initRoutes(mux *http.ServeMux, manager *middleware.Manager) {
+func InitRoutes(mux *http.ServeMux, manager *middleware.Manager) {
 	mux.Handle(
 		"GET /products",
 		manager.AddMiddleware(
@@ -35,6 +35,22 @@ func initRoutes(mux *http.ServeMux, manager *middleware.Manager) {
 		"DELETE /products/{id}",
 		manager.AddMiddleware(
 			http.HandlerFunc(handlers.DeleteProduct),
+			middleware.DummyMiddleware,
+		),
+	)
+
+	mux.Handle(
+		"POST /users",
+		manager.AddMiddleware(
+			http.HandlerFunc(handlers.CreateUser),
+			middleware.DummyMiddleware,
+		),
+	)
+
+	mux.Handle(
+		"POST /users/login",
+		manager.AddMiddleware(
+			http.HandlerFunc(handlers.Login),
 			middleware.DummyMiddleware,
 		),
 	)
