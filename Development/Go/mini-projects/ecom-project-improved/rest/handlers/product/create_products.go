@@ -1,22 +1,36 @@
 package product
 
 import (
-	"ecom-project-improved/database"
+	"ecom-project-improved/repo"
 	"ecom-project-improved/utils"
 	"encoding/json"
 	"net/http"
 )
 
-func (h *Handler) CreateProduct(w http.ResponseWriter, r *http.Request) {
-	var newProduct database.Product
+type ReqCreateProduct struct {
+	Title       string  `json:"title"`
+	Description string  `json:"description"`
+	Price       float32 `json:"price"`
+	ImgURL      string  `json:"imgURL"`
+}
 
+func (h *Handler) CreateProduct(w http.ResponseWriter, r *http.Request) {
+	var reqProduct ReqCreateProduct
 	decoder := json.NewDecoder(r.Body)
-	err := decoder.Decode(&newProduct)
+	err := decoder.Decode(&reqProduct)
 	if err != nil {
 		http.Error(w, "Invalid request body. Give me valid json", 400)
 		return
 	}
 
-	database.Store(newProduct)
-	utils.SendData(w, newProduct, 201)
+	createdProduct, err := h.producRepo.Create(repo.Product{
+		Title: reqProduct.Title,
+		Description: reqProduct.Description,
+		Price: reqProduct.Price,
+		ImgURL: reqProduct.ImgURL,
+	})
+	if err != nil {
+		http.Error(w, "Internal Server Error", http.StatusInternalServerError)
+	}
+	utils.SendData(w, createdProduct, http.StatusCreated)
 }

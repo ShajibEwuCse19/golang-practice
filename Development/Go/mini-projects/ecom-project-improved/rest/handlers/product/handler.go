@@ -1,7 +1,13 @@
 package product
 
-type Handler struct {}
+import "ecom-project-improved/repo"
 
-func NewHandler() *Handler {
-	return &Handler{}
+type Handler struct {
+	producRepo repo.ProductRepo
+}
+
+func NewHandler(producRepo repo.ProductRepo) *Handler {
+	return &Handler{
+		producRepo: producRepo,
+	}
 }

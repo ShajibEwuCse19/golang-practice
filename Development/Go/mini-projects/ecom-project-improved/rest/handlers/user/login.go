@@ -2,7 +2,6 @@ package user
 
 import (
 	"ecom-project-improved/config"
-	"ecom-project-improved/database"
 	"ecom-project-improved/utils"
 	"encoding/json"
 	"net/http"
@@ -23,8 +22,8 @@ func (h *Handler) Login(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	user := database.FindUserByEmailAndPassword(requestLogin.Email, requestLogin.Password)
-	if user == nil {
+	user, err := h.userRepo.FindUserByEmailAndPassword(requestLogin.Email, requestLogin.Password)
+	if err != nil || user == nil {
 		http.Error(w, "Invalid email or password", http.StatusUnauthorized)
 		return
 	}
