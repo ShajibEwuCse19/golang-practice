@@ -20,12 +20,20 @@ func loadConfig() {
 	httpPort, err := strconv.Atoi(os.Getenv("HTTP_PORT"))
 	if err != nil {
 		log.Fatal("HTTP_PORT is not set")
+		os.Exit(1)
+	}
+
+	jwtSecretKey := os.Getenv("JWT_SECRET_KEY")
+	if jwtSecretKey == "" {
+		log.Fatal("JWT_SECRET_KEY is not set")
+		os.Exit(1)
 	}
 
 	configuration = Config{
-		Version:     version,
-		ServiceName: serviceName,
-		HttpPort:    httpPort,
+		Version:      version,
+		ServiceName:  serviceName,
+		HttpPort:     httpPort,
+		JWTSecretKey: jwtSecretKey,
 	}
 }
 
