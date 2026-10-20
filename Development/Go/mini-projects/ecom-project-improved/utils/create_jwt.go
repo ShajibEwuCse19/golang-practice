@@ -20,7 +20,7 @@ type PayLoad struct {
 	IsShopOwner bool   `json:"is_shop_owner"`
 }
 
-func base64ByteArrayEncode(data []byte) string {
+func Base64ByteArrayEncode(data []byte) string {
 	return base64.URLEncoding.WithPadding(base64.NoPadding).EncodeToString(data)
 }
 
@@ -42,21 +42,21 @@ func CreateJwt(secret string, data PayLoad) (string, error) {
 	}
 
 	// 2. Base64URL-encode header and payload
-	headerBase64 := base64ByteArrayEncode(byteArrayHeader)
-	payLoadBase64 := base64ByteArrayEncode(byteArrayPayLoad)
+	headerBase64 := Base64ByteArrayEncode(byteArrayHeader)
+	payLoadBase64 := Base64ByteArrayEncode(byteArrayPayLoad)
 
 	// 3. Create the unsigned message: header.payload
-	message := headerBase64 + "." + payLoadBase64
+	unsignedMessage := headerBase64 + "." + payLoadBase64
 
 	// 4. Compute HMAC-SHA256 signature
 	hmacSha256 := hmac.New(sha256.New, []byte(secret))
-	hmacSha256.Write([]byte(message))
+	hmacSha256.Write([]byte(unsignedMessage))
 	signature := hmacSha256.Sum(nil)
 
-	signatureBase64 := base64ByteArrayEncode(signature)
+	signatureBase64 := Base64ByteArrayEncode(signature)
 
 	// 5. Assemble final JWT
-	jwt := message + "." + signatureBase64 // headerBase64 + "." + payLoadBase64 + "." + signatureBase64
+	jwt := unsignedMessage + "." + signatureBase64 // signedMessage(jwt) = headerBase64 + "." + payLoadBase64 + "." + signatureBase64
 
 	return jwt, nil
 }
