@@ -7,7 +7,7 @@ import (
 	"github.com/lpernett/godotenv"
 )
 
-var configuration Config
+var configuration *Config
 
 func loadConfig() {
 	err := godotenv.Load()
@@ -20,16 +20,26 @@ func loadConfig() {
 	httpPort, err := strconv.Atoi(os.Getenv("HTTP_PORT"))
 	if err != nil {
 		log.Fatal("HTTP_PORT is not set")
+		os.Exit(1)
 	}
 
-	configuration = Config{
-		Version:     version,
-		ServiceName: serviceName,
-		HttpPort:    httpPort,
+	jwtSecretKey := os.Getenv("JWT_SECRET_KEY")
+	if jwtSecretKey == "" {
+		log.Fatal("JWT_SECRET_KEY is not set")
+		os.Exit(1)
+	}
+
+	configuration = &Config{
+		Version:      version,
+		ServiceName:  serviceName,
+		HttpPort:     httpPort,
+		JWTSecretKey: jwtSecretKey,
 	}
 }
 
 func GetConfig() *Config {
-	loadConfig()
-	return &configuration
+	if configuration == nil {
+		loadConfig() //load only one time
+	}
+	return configuration
 }

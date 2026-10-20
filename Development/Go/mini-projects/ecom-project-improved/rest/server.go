@@ -2,13 +2,35 @@ package rest
 
 import (
 	"ecom-project-improved/config"
+	"ecom-project-improved/rest/handlers/product"
+	"ecom-project-improved/rest/handlers/user"
 	"ecom-project-improved/rest/middleware"
 	"fmt"
 	"net/http"
 	"strconv"
 )
 
-func StartServer() {
+type Server struct {
+	//dependency
+	productHandler *product.Handler
+	userHandler    *user.Handler
+	config         *config.Config
+}
+
+// inject the server's dependencies
+func NewServer(
+	productHandler *product.Handler,
+	userHandler *user.Handler,
+	config *config.Config,
+) *Server {
+	return &Server{
+		productHandler: productHandler,
+		userHandler:    userHandler,
+		config:         config,
+	}
+}
+
+func (server *Server) StartServer() {
 	manager := middleware.NewManager() // create a new manager instance where initialized with an empty slice of global middlewares
 	manager.AppendGlobalMiddlewares(
 		middleware.Cors,
@@ -26,9 +48,12 @@ func StartServer() {
 
 	// Here is the solution of the problem: Cors(Preflight(Logger(mux)))
 	wrapperMux := manager.WrapMuxWithGlobalMiddleware(mux) // added mux with mw before server connection
-	InitRoutes(mux, manager)
 
-	err := http.ListenAndServe(":"+strconv.Itoa(config.GetConfig().HttpPort), wrapperMux) // bind the server port 8080 with wrapperMux[CorsWithPreflight(Logger(mux))]
+	//init routes
+	server.productHandler.RegisterRoutes(mux, manager)
+	server.userHandler.RegisterRoutes(mux, manager)
+
+	err := http.ListenAndServe(":"+strconv.Itoa(server.config.HttpPort), wrapperMux) // bind the server port 8080 with wrapperMux[CorsWithPreflight(Logger(mux))]
 	if err != nil {
 		fmt.Println("Error starting the server", err)
 	}

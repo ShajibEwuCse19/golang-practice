@@ -1,4 +1,4 @@
-package handlers
+package product
 
 import (
 	"ecom-project-improved/database"
@@ -6,7 +6,7 @@ import (
 	"ecom-project-improved/utils"
 )
 
-func GetProducts(w http.ResponseWriter, r *http.Request) {
+func (h *Handler) GetProducts(w http.ResponseWriter, r *http.Request) {
 	data := database.List()
 	if data == nil {
 		utils.SendData(w, "No products found", 404)

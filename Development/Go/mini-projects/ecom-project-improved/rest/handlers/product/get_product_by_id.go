@@ -1,4 +1,4 @@
-package handlers
+package product
 
 import (
 	"ecom-project-improved/database"
@@ -7,7 +7,7 @@ import (
 	"strconv"
 )
 
-func GetProductById(w http.ResponseWriter, r *http.Request) {
+func (h *Handler) GetProductById(w http.ResponseWriter, r *http.Request) {
 	productId := r.PathValue("id") //get the product ID from the URL parameters
 	id, err := strconv.Atoi(productId) // convert the product ID from string to int
 

@@ -1,18 +1,20 @@
-package handlers
+package user
 
 import (
+	"ecom-project-improved/config"
 	"ecom-project-improved/database"
 	"ecom-project-improved/utils"
 	"encoding/json"
 	"net/http"
+	"strconv"
 )
 
 type RequestLogin struct {
-	Email string `json:"email"`
+	Email    string `json:"email"`
 	Password string `json:"password"`
 }
 
-func Login(w http.ResponseWriter, r *http.Request) {
+func (h *Handler) Login(w http.ResponseWriter, r *http.Request) {
 	var requestLogin RequestLogin
 	decoder := json.NewDecoder(r.Body)
 	err := decoder.Decode(&requestLogin)
@@ -26,5 +28,20 @@ func Login(w http.ResponseWriter, r *http.Request) {
 		http.Error(w, "Invalid email or password", http.StatusUnauthorized)
 		return
 	}
-	utils.SendData(w, user, http.StatusCreated) 
+
+	// create JWT token
+	accessToken, err := utils.CreateJwt(
+		config.GetConfig().JWTSecretKey,
+		utils.PayLoad{
+			Sub:         strconv.Itoa(int(user.ID)),
+			FirstName:   user.FirstName,
+			LastName:    user.LastName,
+		},
+	)
+	if err != nil {
+		http.Error(w, "Internal Server Error", http.StatusInternalServerError)
+		return
+	}
+
+	utils.SendData(w, accessToken, http.StatusCreated)
 }

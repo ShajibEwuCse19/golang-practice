@@ -1,4 +1,5 @@
-package handlers
+package user
+
 
 import (
 	"ecom-project-improved/database"
@@ -8,7 +9,7 @@ import (
 	"net/http"
 )
 
-func CreateUser(w http.ResponseWriter, r *http.Request){
+func (h *Handler) CreateUser(w http.ResponseWriter, r *http.Request){
 	var newUser database.User // instance/object of database User struct
 	decoder := json.NewDecoder(r.Body) // decode user info
 	err := decoder.Decode(&newUser)

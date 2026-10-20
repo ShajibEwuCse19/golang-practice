@@ -1,4 +1,4 @@
-package handlers
+package product
 
 import (
 	"ecom-project-improved/database"
@@ -7,7 +7,7 @@ import (
 	"strconv"
 )
 
-func DeleteProduct(w http.ResponseWriter, r *http.Request) {
+func (h *Handler) DeleteProduct(w http.ResponseWriter, r *http.Request) {
 	productID, err := strconv.Atoi(r.PathValue("id"))
 
 	if err != nil {
