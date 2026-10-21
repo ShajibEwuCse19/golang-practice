@@ -34,11 +34,11 @@ func NewUserRepo(db *sqlx.DB) UserRepo {
 func (r *userRepo) Create(user User) (*User, error) {
 	query := `
 		INSERT INTO users (
-		FirstName, 
-		LastName, 
-		Email, 
-		Password, 
-		IsShopOwner
+		first_name, 
+		last_name, 
+		email, 
+		password, 
+		is_shop_owner
 		)
 		VALUES (
 		:first_name, 
@@ -46,7 +46,7 @@ func (r *userRepo) Create(user User) (*User, error) {
 		:email, 
 		:password, 
 		:is_shop_owner)
-		RETURNING id, created_at
+		RETURNING id
 	`
 
 	// Executer named query
