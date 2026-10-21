@@ -40,11 +40,11 @@ func (server *Server) StartServer() {
 
 	mux := http.NewServeMux() // router (multiplexer)
 
-	fmt.Println("Server running on port: 8080")
+	fmt.Println("Server running on port: 8081")
 
 	// here mux directly bind with server. So, when server get Preflight request (OPTIONS), it will directly call handler.
 	// As, OPTION method has no handler, it will reject the request and browser will show Preflight error.
-	// err := http.ListenAndServe(":8080", mux) // starts the server on port 3010 and listen for incoming requests.
+	// err := http.ListenAndServe(":8081", mux) // starts the server on port 3010 and listen for incoming requests.
 
 	// Here is the solution of the problem: Cors(Preflight(Logger(mux)))
 	wrapperMux := manager.WrapMuxWithGlobalMiddleware(mux) // added mux with mw before server connection

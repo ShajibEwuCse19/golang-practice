@@ -1,12 +1,18 @@
 package repo
 
+import (
+	"database/sql"
+
+	"github.com/jmoiron/sqlx"
+)
+
 type User struct {
-	ID          uint8  `json:"id"`
-	FirstName   string `json:"first_name"`
-	LastName    string `json:"last_name"`
-	Email       string `json:"email"`
-	Password    string `json:"password"`
-	IsShopOwner bool   `json:"is_shop_owner"`
+	ID          uint8  `json:"id" db:"id"`
+	FirstName   string `json:"first_name" db:"first_name"`
+	LastName    string `json:"last_name" db:"last_name"`
+	Email       string `json:"email" db:"email"`
+	Password    string `json:"password" db:"password"`
+	IsShopOwner bool   `json:"is_shop_owner" db:"is_shop_owner"`
 }
 
 type UserRepo interface {
@@ -16,29 +22,78 @@ type UserRepo interface {
 }
 
 type userRepo struct {
-	userList []*User
+	db *sqlx.DB
 }
 
-func NewUserRepo() UserRepo {
-	return &userRepo{}
-}
-
-func (u *userRepo) Create(user User) (*User, error) {
-	if user.ID != 0 {
-		return nil, nil
+func NewUserRepo(db *sqlx.DB) UserRepo {
+	return &userRepo{
+		db: db,
 	}
-	user.ID = uint8(len(u.userList) + 1)
-	u.userList = append(u.userList, &user) 
-	return &user, nil
 }
-func (u *userRepo) List() ([]*User, error) {
-	return u.userList, nil
-}
-func (u *userRepo) FindUserByEmailAndPassword(email string, password string) (*User, error) {
-	for _, user := range u.userList {
-		if user.Email == email && user.Password == password {
-			return user, nil
+
+func (r *userRepo) Create(user User) (*User, error) {
+	query := `
+		INSERT INTO users (
+		FirstName, 
+		LastName, 
+		Email, 
+		Password, 
+		IsShopOwner
+		)
+		VALUES (
+		:first_name, 
+		:last_name, 
+		:email, 
+		:password, 
+		:is_shop_owner)
+		RETURNING id, created_at
+	`
+
+	// Executer named query
+	rows, err := r.db.NamedQuery(query, user)
+	if err != nil {
+		return nil, err
+	}
+	defer rows.Close()
+
+	if rows.Next() {
+		err := rows.Scan(&user.ID)
+		if err != nil {
+			return nil, err
 		}
 	}
-	return nil, nil
+	return &user, nil
+}
+
+func (r *userRepo) List() ([]*User, error) {
+	query := `
+	SELECT id, first_name, last_name, email, password, is_shop_owner
+	FROM users
+	`
+	var user []*User
+	err := r.db.Select(&user, query)
+	if err != nil {
+		return nil, err
+	}
+
+	return user, nil
+}
+
+func (r *userRepo) FindUserByEmailAndPassword(email string, password string) (*User, error) {
+	query := `
+	SELECT id, first_name, last_name, email, password, is_shop_owner
+	FROM users
+	WHERE email = $1 AND password = $2
+	LIMIT 1
+	`
+
+	var user User
+	err := r.db.Get(&user, query, email, password)
+	if err != nil {
+		if err == sql.ErrNoRows {
+			return nil, nil
+		}
+		return nil, err
+	}
+	return &user, nil
 }
