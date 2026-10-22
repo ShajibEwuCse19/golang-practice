@@ -20,13 +20,13 @@ func Serve() {
 	fmt.Println("Http Port:", config.HttpPort)
 	utils.FreePort(":" + strconv.Itoa(config.HttpPort)) // Automatically check and kill any old or suspended process holding this port
 
-	dbCon, err := db.NewConnection()
+	db, err := db.NewConnection()
 	if err != nil {
 		fmt.Println("db connection err:", err)
 		os.Exit(1)
 	}
-	userRepo := repo.NewUserRepo(dbCon)
-	productRepo := repo.NewProductRepo()
+	userRepo := repo.NewUserRepo(db)
+	productRepo := repo.NewProductRepo(db)
 	
 	userHandler := user.NewHandler(userRepo)
 	productHandler := product.NewHandler(productRepo)
