@@ -8,7 +8,7 @@ import (
 	_ "github.com/lib/pq"
 )
 
-func NewConnection(config config.Config) (*sqlx.DB, error) { // *sqlx.DB => connection client
+func NewConnection(config *config.Config) (*sqlx.DB, error) { // *sqlx.DB => connection client
 	dbSource := GetConnectionString(config)
 	dbConnection, err := sqlx.Connect("postgres", dbSource) //there are different driver name for different db. here we are using postgres driver
 	if err != nil {
@@ -18,7 +18,7 @@ func NewConnection(config config.Config) (*sqlx.DB, error) { // *sqlx.DB => conn
 	return dbConnection, nil // here, dbConnection is client.
 }
 
-func GetConnectionString(dbConfig config.Config) string {
+func GetConnectionString(dbConfig *config.Config) string {
 	sslMode := "disable"
 
 	if dbConfig.DB.EnableSSlMode {
