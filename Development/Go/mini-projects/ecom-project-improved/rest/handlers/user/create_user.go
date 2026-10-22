@@ -41,6 +41,7 @@ func (h *Handler) CreateUser(w http.ResponseWriter, r *http.Request){
 		IsShopOwner: newUser.IsShopOwner,
 	})
 	if err != nil {
+		fmt.Println(err)
 		http.Error(w, "Internal Server Error", http.StatusInternalServerError)
 		return
 	}
