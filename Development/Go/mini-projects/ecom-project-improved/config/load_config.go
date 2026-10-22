@@ -1,10 +1,10 @@
 package config
 
 import (
+	"github.com/lpernett/godotenv"
 	"log"
 	"os"
 	"strconv"
-	"github.com/lpernett/godotenv"
 )
 
 var configuration *Config
@@ -29,11 +29,34 @@ func loadConfig() {
 		os.Exit(1)
 	}
 
+	host := os.Getenv("DB_HOST")
+	port, err := strconv.Atoi(os.Getenv("DB_PORT"))
+	if err != nil {
+		log.Fatal("DB_PORT is not set")
+		os.Exit(1)
+	}
+	name := os.Getenv("DB_NAME")
+	user := os.Getenv("DB_USER")
+	password := os.Getenv("DB_PASSWORD")
+	enableSllMode, err := strconv.ParseBool(os.Getenv("DB_ENABLE_SSL_MODE"))
+	if err != nil {
+		log.Fatal("DB_ENABLE_SSL_MODE is not set")
+		os.Exit(1)
+	}
+
 	configuration = &Config{
 		Version:      version,
 		ServiceName:  serviceName,
 		HttpPort:     httpPort,
 		JWTSecretKey: jwtSecretKey,
+		DB: DBConfig{
+			Host:          host,
+			Port:          port,
+			Name:          name,
+			User:          user,
+			Password:      password,
+			EnableSSlMode: enableSllMode,
+		},
 	}
 }
 

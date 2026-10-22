@@ -39,9 +39,6 @@ func (server *Server) StartServer() {
 	) // store all the common/global middlewares here
 
 	mux := http.NewServeMux() // router (multiplexer)
-
-	fmt.Println("Server running on port: 8080")
-
 	// here mux directly bind with server. So, when server get Preflight request (OPTIONS), it will directly call handler.
 	// As, OPTION method has no handler, it will reject the request and browser will show Preflight error.
 	// err := http.ListenAndServe(":8080", mux) // starts the server on port 3010 and listen for incoming requests.
