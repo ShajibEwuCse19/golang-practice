@@ -8,18 +8,8 @@ import (
 	_ "github.com/lib/pq"
 )
 
-type DBConfig struct {
-	config config.Config
-}
-
-func NewDBConfig(config config.Config) *DBConfig {
-	return &DBConfig{
-		config: config,
-	}
-}
-
-func (dbconf *DBConfig) NewConnection() (*sqlx.DB, error) { // *sqlx.DB => connection client
-	dbSource := GetConnectionString(dbconf.config)
+func NewConnection(config config.Config) (*sqlx.DB, error) { // *sqlx.DB => connection client
+	dbSource := GetConnectionString(config)
 	dbConnection, err := sqlx.Connect("postgres", dbSource) //there are different driver name for different db. here we are using postgres driver
 	if err != nil {
 		fmt.Println(err)
