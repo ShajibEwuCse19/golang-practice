@@ -3,10 +3,12 @@ package cmd
 import (
 	"ecom-project-improved/config"
 	"ecom-project-improved/infra/db"
+	"ecom-project-improved/product"
 	"ecom-project-improved/repo"
 	"ecom-project-improved/rest"
-	"ecom-project-improved/rest/handlers/product"
-	"ecom-project-improved/rest/handlers/user"
+	productHandler "ecom-project-improved/rest/handlers/product"
+	userHandler "ecom-project-improved/rest/handlers/user"
+	"ecom-project-improved/user"
 	"ecom-project-improved/utils"
 	"fmt"
 	"os"
@@ -33,11 +35,16 @@ func Serve() {
 		os.Exit(1)
 	}
 
+	//repos
 	userRepo := repo.NewUserRepo(dbCon)
 	productRepo := repo.NewProductRepo(dbCon)
-	
-	userHandler := user.NewHandler(userRepo)
-	productHandler := product.NewHandler(productRepo)
+
+	//domains
+	userSvc := user.NewService(userRepo)
+	productSvc := product.NewService(productRepo)
+
+	userHandler := userHandler.NewHandler(userSvc)
+	productHandler := productHandler.NewHandler(productSvc)
 
 	server := rest.NewServer(productHandler, userHandler, config)
 	server.StartServer()

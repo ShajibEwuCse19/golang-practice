@@ -1,21 +1,14 @@
 package repo
 
-import "github.com/jmoiron/sqlx"
+import (
+	"ecom-project-improved/domain"
+	"ecom-project-improved/product"
+	"github.com/jmoiron/sqlx"
+)
 
-type Product struct {
-	ID          uint8   `json:"id" db:"id"`
-	Title       string  `json:"title" db:"title"`
-	Description string  `json:"description" db:"description"`
-	Price       float32 `json:"price" db:"price"`
-	ImgURL      string  `json:"imgURL" db:"img_url"`
-}
-
+// ProductRepo interface
 type ProductRepo interface {
-	Create(p Product) (*Product, error)
-	Get(id uint8) (*Product, error)
-	List() ([]*Product, error)
-	Delete(id uint8) error
-	Update(p Product) (*Product, error)
+	product.ProductRepo
 }
 
 type productRepo struct {
@@ -30,7 +23,7 @@ func NewProductRepo(db *sqlx.DB) ProductRepo {
 	return repo
 }
 
-func (r *productRepo) Create(p Product) (*Product, error) {
+func (r *productRepo) Create(p domain.Product) (*domain.Product, error) {
 	query := `
 	INSERT INTO products (
 		title,
@@ -63,12 +56,12 @@ func (r *productRepo) Create(p Product) (*Product, error) {
 	return &p, nil
 }
 
-func (r *productRepo) List() ([]*Product, error) {
+func (r *productRepo) List() ([]*domain.Product, error) {
 	query := `
 	SELECT id, title, description, price, img_url
 	FROM products
 	`
-	var p []*Product
+	var p []*domain.Product
 	err := r.db.Select(&p, query)
 	if err != nil {
 		return nil, err
@@ -76,14 +69,14 @@ func (r *productRepo) List() ([]*Product, error) {
 	return p, nil
 }
 
-func (r *productRepo) Get(id uint8) (*Product, error) {
+func (r *productRepo) Get(id uint8) (*domain.Product, error) {
 	query := `
 	SELECT id, title, description, price, img_url
 	FROM products
 	WHERE id = $1
 	LIMIT 1
 	`
-	var p Product
+	var p domain.Product
 	err := r.db.Get(&p, query, id)
 	if err != nil {
 		return nil, err
@@ -103,7 +96,7 @@ func (r *productRepo) Delete(id uint8) error {
 	return nil
 }
 
-func (r *productRepo) Update(p Product) (*Product, error) {
+func (r *productRepo) Update(p domain.Product) (*domain.Product, error) {
 	query := `
 	UPDATE products
 	SET title = :title, description = :description, price = :price, img_url = :img_url
