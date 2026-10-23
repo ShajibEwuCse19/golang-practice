@@ -60,16 +60,22 @@ func (r *productRepo) Create(p domain.Product) (*domain.Product, error) {
 	return &p, nil
 }
 
-func (r *productRepo) List() ([]*domain.Product, error) {
+func (r *productRepo) List(page, limit int) ([]*domain.Product, error) {
+	offset := (page - 1) * limit
+
 	query := `
-	SELECT id, title, description, price, img_url
-	FROM products
-	`
+        SELECT id, title, description, price, img_url
+        FROM products
+        ORDER BY id
+        LIMIT $1 OFFSET $2
+    `
+
 	var p []*domain.Product
-	err := r.db.Select(&p, query)
+	err := r.db.Select(&p, query, limit, offset)
 	if err != nil {
 		return nil, err
 	}
+
 	return p, nil
 }
 
