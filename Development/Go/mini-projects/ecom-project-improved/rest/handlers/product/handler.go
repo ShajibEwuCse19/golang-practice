@@ -1,13 +1,11 @@
 package product
 
-import "ecom-project-improved/repo"
-
 type Handler struct {
-	producRepo repo.ProductRepo
+	svc Service
 }
 
-func NewHandler(producRepo repo.ProductRepo) *Handler {
+func NewHandler(svc Service) *Handler {
 	return &Handler{
-		producRepo: producRepo,
+		svc: svc,
 	}
 }
