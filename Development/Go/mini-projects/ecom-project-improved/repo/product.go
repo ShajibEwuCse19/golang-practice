@@ -7,22 +7,26 @@ import (
 )
 
 // ProductRepo interface
+// Parent port.go [contract] will provide signatures using embeddig
 type ProductRepo interface {
-	product.ProductRepo
+	product.ProductRepo // embedding with parent
 }
 
+// this dependency is for create client [connect with postgres db]
 type productRepo struct {
 	db *sqlx.DB
 }
 
 // This is a constructor whice initialize/create an object of productRepo
-func NewProductRepo(db *sqlx.DB) ProductRepo {
-	repo := &productRepo{
-		db: db,
+// repo (productRepo) is a Child of ProductRepo interface
+func NewProductRepo(db *sqlx.DB) ProductRepo { //returning parent [product.ProductRepo], So, must need to implements all methods from interface, then productRepo == ProductRepo
+	repo := &productRepo{ // initialize child
+		db: db, // inject postgres db
 	}
 	return repo
 }
 
+// Accoding to parent [port.go contract], child Implemnet ProductRepo interface [Create, Update, List, Get, Delete]
 func (r *productRepo) Create(p domain.Product) (*domain.Product, error) {
 	query := `
 	INSERT INTO products (
