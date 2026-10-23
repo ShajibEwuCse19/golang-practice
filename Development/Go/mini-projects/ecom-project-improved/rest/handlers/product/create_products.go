@@ -1,7 +1,7 @@
 package product
 
 import (
-	"ecom-project-improved/repo"
+	"ecom-project-improved/domain"
 	"ecom-project-improved/utils"
 	"encoding/json"
 	"net/http"
@@ -23,7 +23,7 @@ func (h *Handler) CreateProduct(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	createdProduct, err := h.producRepo.Create(repo.Product{
+	createdProduct, err := h.svc.Create(domain.Product{
 		Title: reqProduct.Title,
 		Description: reqProduct.Description,
 		Price: reqProduct.Price,

@@ -1,7 +1,7 @@
 package user
 
 import (
-	"ecom-project-improved/repo"
+	"ecom-project-improved/domain"
 	"ecom-project-improved/utils"
 	"encoding/json"
 	"fmt"
@@ -33,7 +33,7 @@ func (h *Handler) CreateUser(w http.ResponseWriter, r *http.Request){
 		return
 	}
 
-	createdUser, err := h.userRepo.Create(repo.User{
+	createdUser, err := h.svc.Create(domain.User{
 		FirstName:   newUser.FirstName,
 		LastName:    newUser.LastName,
 		Email:       newUser.Email,

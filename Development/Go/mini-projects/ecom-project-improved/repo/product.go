@@ -1,36 +1,33 @@
 package repo
 
-import "github.com/jmoiron/sqlx"
+import (
+	"ecom-project-improved/domain"
+	"ecom-project-improved/product"
+	"github.com/jmoiron/sqlx"
+)
 
-type Product struct {
-	ID          uint8   `json:"id" db:"id"`
-	Title       string  `json:"title" db:"title"`
-	Description string  `json:"description" db:"description"`
-	Price       float32 `json:"price" db:"price"`
-	ImgURL      string  `json:"imgURL" db:"img_url"`
-}
-
+// ProductRepo interface
+// Parent port.go [contract] will provide signatures using embeddig
 type ProductRepo interface {
-	Create(p Product) (*Product, error)
-	Get(id uint8) (*Product, error)
-	List() ([]*Product, error)
-	Delete(id uint8) error
-	Update(p Product) (*Product, error)
+	product.ProductRepo // embedding with parent
 }
 
+// this dependency is for create client [connect with postgres db]
 type productRepo struct {
 	db *sqlx.DB
 }
 
 // This is a constructor whice initialize/create an object of productRepo
-func NewProductRepo(db *sqlx.DB) ProductRepo {
-	repo := &productRepo{
-		db: db,
+// repo (productRepo) is a Child of ProductRepo interface
+func NewProductRepo(db *sqlx.DB) ProductRepo { //returning parent [product.ProductRepo], So, must need to implements all methods from interface, then productRepo == ProductRepo
+	repo := &productRepo{ // initialize child
+		db: db, // inject postgres db
 	}
 	return repo
 }
 
-func (r *productRepo) Create(p Product) (*Product, error) {
+// Accoding to parent [port.go contract], child Implemnet ProductRepo interface [Create, Update, List, Get, Delete]
+func (r *productRepo) Create(p domain.Product) (*domain.Product, error) {
 	query := `
 	INSERT INTO products (
 		title,
@@ -63,27 +60,33 @@ func (r *productRepo) Create(p Product) (*Product, error) {
 	return &p, nil
 }
 
-func (r *productRepo) List() ([]*Product, error) {
+func (r *productRepo) List(page, limit int) ([]*domain.Product, error) {
+	offset := (page - 1) * limit
+
 	query := `
-	SELECT id, title, description, price, img_url
-	FROM products
-	`
-	var p []*Product
-	err := r.db.Select(&p, query)
+        SELECT id, title, description, price, img_url
+        FROM products
+        ORDER BY id
+        LIMIT $1 OFFSET $2
+    `
+
+	var p []*domain.Product
+	err := r.db.Select(&p, query, limit, offset)
 	if err != nil {
 		return nil, err
 	}
+
 	return p, nil
 }
 
-func (r *productRepo) Get(id uint8) (*Product, error) {
+func (r *productRepo) Get(id uint8) (*domain.Product, error) {
 	query := `
 	SELECT id, title, description, price, img_url
 	FROM products
 	WHERE id = $1
 	LIMIT 1
 	`
-	var p Product
+	var p domain.Product
 	err := r.db.Get(&p, query, id)
 	if err != nil {
 		return nil, err
@@ -103,7 +106,7 @@ func (r *productRepo) Delete(id uint8) error {
 	return nil
 }
 
-func (r *productRepo) Update(p Product) (*Product, error) {
+func (r *productRepo) Update(p domain.Product) (*domain.Product, error) {
 	query := `
 	UPDATE products
 	SET title = :title, description = :description, price = :price, img_url = :img_url
