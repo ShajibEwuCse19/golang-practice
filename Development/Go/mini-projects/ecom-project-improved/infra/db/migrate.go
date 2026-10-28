@@ -32,6 +32,8 @@ db.DB -> db connection and sqlx converts to stdlib *sql.DB (need to verify this)
 "postgres" -> database driver name (lib/pq)
 migrations -> migrate.FileMigrationSource (migration file source)
 migrate.Up -> migration direction (Up, Down, UpAndDown, Reset, N)
+           -> scan all .sql files and find related annotations, -- +migrate Up, -- +migrate Down,etc.
+		   -> Then run the query matched with annotation.
 
 return: number of migration applied and error
 

@@ -1,4 +1,4 @@
-package product
+package services
 
 import (
 	"ecom-project-improved/domain"

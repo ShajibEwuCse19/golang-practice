@@ -3,12 +3,12 @@ package repo
 import (
 	"database/sql"
 	"ecom-project-improved/domain"
-	"ecom-project-improved/user"
+	srvUser "ecom-project-improved/services/user"
 	"github.com/jmoiron/sqlx"
 )
 
 type UserRepo interface {
-	user.UserRepo //Embedding Interface
+	srvUser.UserRepo //Embedding Interface
 }
 
 type userRepo struct {

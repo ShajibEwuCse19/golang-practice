@@ -2,14 +2,14 @@ package repo
 
 import (
 	"ecom-project-improved/domain"
-	"ecom-project-improved/product"
+	srvProduct "ecom-project-improved/services/product"
 	"github.com/jmoiron/sqlx"
 )
 
 // ProductRepo interface
 // Parent port.go [contract] will provide signatures using embeddig
 type ProductRepo interface {
-	product.ProductRepo // embedding with parent
+	srvProduct.ProductRepo // embedding with parent
 }
 
 // this dependency is for create client [connect with postgres db]
