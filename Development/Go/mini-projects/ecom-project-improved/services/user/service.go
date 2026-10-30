@@ -1,15 +1,16 @@
-package user
+package services
 
 import "ecom-project-improved/domain"
 
-// service.go depend on port.go [Service and UserRepo] in the same directory
+// service implements the business logic for the user domain and depends on UserRepo interface.
 type service struct {
 	userRepo UserRepo
 }
 
+// NewService initializes a new user service with its repository dependency.
 func NewService(userRepo UserRepo) Service {
 	return &service{
-		userRepo: userRepo, // now I need to implement the methods of Service interface here
+		userRepo: userRepo,
 	}
 }
 

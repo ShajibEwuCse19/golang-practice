@@ -21,10 +21,7 @@ func (h *Handler) GetProducts(w http.ResponseWriter, r *http.Request) {
 }
 
 func addQueryParamsForPagination(w http.ResponseWriter, r *http.Request) (int, int) {
-	// pagination steps
-	// get query parameters
-	// get page no
-	// get limit no from query parameters 
+	// Extract pagination query parameters (page and limit)
 	reqQuery := r.URL.Query()
 	pageStr := reqQuery.Get("page")
 	limitStr := reqQuery.Get("limit")
@@ -39,10 +36,10 @@ func addQueryParamsForPagination(w http.ResponseWriter, r *http.Request) (int, i
 		return 0, 0
 	}
 	if page == 0 {
-		page = 1 // initial request
+		page = 1 // Default to page 1
 	}
 	if limit == 0 {
-		limit = 10 // first 10 will be load 
+		limit = 10 // Default to 10 items per page
 	}
 
 	return int(page), int(limit)

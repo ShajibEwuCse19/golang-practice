@@ -4,60 +4,55 @@ import (
 	"net/http"
 )
 
-// type Middleware is a higher-order function that takes an http.Handler and returns an http.Handler
-// Why type Middleware is needed?
-// Multiple middlewares have similar signature => func(http.Handler) http.Handler.
-// So, type Middleware type alias is used to avoid repetitive code.
+// Middleware represents a higher-order function that takes an http.Handler and returns a wrapped http.Handler.
 type Middleware func(http.Handler) http.Handler
 
-type Manager struct { // struct for manager
-	globalMiddlewares []Middleware // list of Middleware (which is a function).
+// Manager manages global and route-specific middleware chains.
+type Manager struct {
+	globalMiddlewares []Middleware
 }
 
-// Why NewManager Constructor is used?
-// - Before using the Manager, we will call NewManager() for initialize empty slice for globalMiddlewares
-func NewManager() *Manager { // initialize globalMiddlewares
-	return &Manager{ // returns a pointer of new instance of Manager struct
+// NewManager initializes a new Manager instance with an empty slice of global middlewares.
+func NewManager() *Manager {
+	return &Manager{
 		globalMiddlewares: make([]Middleware, 0),
 	}
 }
 
-// Append all the mws in the mw global list
-func (m *Manager) AppendGlobalMiddlewares(middlewares ...Middleware) { //
+// AppendGlobalMiddlewares adds one or more middlewares to the global middleware chain.
+func (m *Manager) AppendGlobalMiddlewares(middlewares ...Middleware) {
 	m.globalMiddlewares = append(m.globalMiddlewares, middlewares...)
 }
 
 /*
-এটি নিশ্চিত করে যে স্লাইসে আপনি যেভাবে লিখবেন:
-manager.AppendMiddleware(RecoverPanic, Logger, CORS)
-রিকোয়েস্ট ঠিক সেভাবেই প্রথমে RecoverPanic $\to$ তারপর Logger $\to$ তারপর CORS পার হয়ে মূল হ্যান্ডলারে পৌঁছাবে।
+মিডলওয়্যার চেইনিং নীতি:
+স্লাইসে যেভাবে মিডলওয়্যার যুক্ত করা হবে (যেমন: CORS, Preflight, Logger),
+রিকোয়েস্ট ঠিক সেই ক্রমানুসারে একটির পর একটি পার হয়ে মূল হ্যান্ডলারে পৌঁছাবে।
 */
 
-// Pass next handler in all the Middlewares one by one and wrap them.
-
+// WrapMuxWithGlobalMiddleware wraps an http.Handler (e.g. ServeMux) with all registered global middlewares.
 func (m *Manager) WrapMuxWithGlobalMiddleware(next http.Handler, middlewares ...Middleware) http.Handler {
 	handler := next
 
-	// Global Middlewares রিভার্স অর্ডারে র‍্যাপ করা
-	// globalMiddlewares[Cors, Preflight, Logger]
+	// Wrap in reverse order so the first middleware in the slice executes first:
+	// e.g. Cors(Preflight(Logger(handler)))
 	for i := len(m.globalMiddlewares) - 1; i >= 0; i-- {
 		handler = m.globalMiddlewares[i](handler)
-	} 
-	// CorsWill apply first, then return handler to Preflight() and finally handler to the original handler
+	}
 
-	return handler // Cors(Preflight(Logger(handler)) // in this case mux is 'handler'
+	return handler
 }
 
-
+// AddMiddleware wraps a route handler with route-specific middlewares in execution order.
 func (m *Manager) AddMiddleware(next http.Handler, middlewares ...Middleware) http.Handler {
 	handler := next
 
-	// Route Specific Middlewares রিভার্স অর্ডারে র‍্যাপ করা
+	// Wrap in reverse order so middlewares[0] executes first
 	for i := len(middlewares) - 1; i >= 0; i-- {
-		handler = middlewares[i](handler) // mw[i] means middleware (which is a function) at index i and mw[i](handler) means applying that middleware to the handler
+		handler = middlewares[i](handler)
 	}
 
-	return handler // DummyMiddleware(http.HandlerFunc(handlers.GetProducts))
+	return handler
 }
 
 /*
