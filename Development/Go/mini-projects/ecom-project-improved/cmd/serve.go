@@ -270,4 +270,52 @@ Go ভাষায় কোনো 'implements' কিওয়ার্ড নেই�
 - চুক্তি ২ (Service -> Repo):
   • Interface / Port : services/product/port.go      -> type ProductRepo interface
   • Implementer      : repo/product.go               -> type productRepo struct
+
+
+============================================================================================
+              লেয়ারগুলোর পূর্ণ স্বাধীনতা ও আত্মনির্ভরশীলতা (Layer Independence)
+============================================================================================
+
+১. সবাই স্বাধীন (Nobody depends on another layer's concrete struct):
+   - Handler কিন্তু কখনো services/product/service.go-এর *service স্ট্রাক্ট চেনে না।
+   - Service-ও কখনো repo/product.go-এর *productRepo স্ট্রাক্ট চেনে না।
+   - প্রতিটি লেয়ার তার নিজস্ব 'port.go'-তে নিজের চাহিদামতো চুক্তি (Interface) সংজ্ঞায়িত করে
+     এবং সেই চুক্তির ওপর ভিত্তি করে নিজের Constructor তৈরি করে।
+
+২. কনস্ট্রাক্টরের কোড স্নিপেট তুলনা (Symmetry in Constructors):
+
+   ক. Handler Constructor (rest/handlers/product/handler.go):
+      // Handler তার নিজস্ব প্যাকেজের 'port.go'-এর Service ইন্টারফেস গ্রহণ করে:
+      func NewHandler(svc Service) *Handler {
+          return &Handler{svc: svc}
+      }
+
+   খ. Service Constructor (services/product/service.go):
+      // Service-ও তার নিজস্ব প্যাকেজের 'port.go'-এর ProductRepo ইন্টারফেস গ্রহণ করে:
+      func NewService(productRepo ProductRepo) Service {
+          return &service{productRepo: productRepo}
+      }
+
+৩. কেন সরাসরি কংক্রিট স্ট্রাক্ট (যেমন: NewHandler(svc *services.service)) নেওয়া হয় না?
+   - ১. Unit Testing (মকিং সুবিধা): 
+        ইন্টারফেস থাকার কারণে হ্যান্ডলার টেস্ট করার সময় আসল ডাটাবেজ বা সার্ভিস না ডেকে 
+        একটি Fake/Mock সার্ভিস পাস করা যায়:
+        type MockProductService struct{}
+        func (m *MockProductService) Create(...) ...
+        handler := NewHandler(&MockProductService{}) // ডাটাবেজ ছাড়াই ইউনিট টেস্ট সম্ভব!
+   - ২. Loose Coupling (আলগা সংযোগ): 
+        সার্ভিস বা রিপোজিটরির ভেতরের কোড পরিবর্তন হলেও হ্যান্ডলারের কোড নষ্ট হয় না।
+   - ৩. Circular Dependency এরর প্রতিরোধ: 
+        সরাসরি একে অপরের স্ট্রাক্ট ইমপোর্ট করলে Go compiler সাইক্লিক ইমপোর্ট এরর দিত।
+
+৪. তাহলে তারা একে অপরের সাথে যুক্ত হয় কোথায়?
+   - তারা যুক্ত হয় শুধুমাত্র এই 'cmd/serve.go' (Composition Root) ফাইলে:
+     userRepo := repo.NewUserRepo(dbCon)
+     userSvc := srvUser.NewService(userRepo)         // Repo ঢুকলো Service-এ with same signature implementation
+     userHandler := userHandler.NewHandler(userSvc) // Service ঢুকলো Handler-এ with same signature implementation
+
+   সারমর্ম: 
+   প্রত্যেকটি লেয়ার সম্পূর্ণ স্বাধীন। তারা নিজেদের প্রয়োজনে চুক্তিপত্র (port.go) তৈরি করে রাখে।
+   অন্য লেয়ার এসে শুধু সেই চুক্তিটি পূরণ করে (fulfill the contract), আর cmd/serve.go তাদের
+   একসাথে তারের মতো জুড়ে দিয়ে পুরো অ্যাপটিকে সচল করে!
 */
