@@ -12,7 +12,7 @@ type ProductRepo interface {
 	srvProduct.ProductRepo // embedding with parent
 }
 
-// this dependency is for create client [connect with postgres db]
+// this dependency is for create client [connect with postgres db] as we need Live db for query
 type productRepo struct {
 	db *sqlx.DB
 }

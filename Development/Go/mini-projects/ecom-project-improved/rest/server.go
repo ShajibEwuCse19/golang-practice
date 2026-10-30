@@ -46,7 +46,7 @@ func (server *Server) StartServer() {
 	// Here is the solution of the problem: Cors(Preflight(Logger(mux)))
 	wrapperMux := manager.WrapMuxWithGlobalMiddleware(mux) // added mux with mw before server connection
 
-	//init routes
+	//init routes -> mux for for handler and manager for if we need to add middleware in any handler specific. 
 	server.productHandler.RegisterRoutes(mux, manager)
 	server.userHandler.RegisterRoutes(mux, manager)
 
