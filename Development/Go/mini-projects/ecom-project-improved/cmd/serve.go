@@ -178,4 +178,96 @@ Backward Flow (Response):
                  and returns the final result back to /rest.
 6. /rest      -> Receives the result from /services, sets the appropriate HTTP status code (201, 400, 500), 
                  sets response headers (application/json), and serializes the JSON response to the client.
+
+
+
+============================================================================================
+                                Contract Flow & Verification
+============================================================================================
+
+Dependency Injection in cmd/serve.go:
+-------------------------------------
+// ১. repo অবজেক্ট তৈরি হলো
+productRepo := repo.NewProductRepo(dbCon)
+
+// ২. repo অবজেক্টটি পাস করা হলো service-এর ভেতরে! (Service expects a contract for repo)
+productSvc := srvProduct.NewService(productRepo) 
+
+// ৩. service অবজেক্টটি পাস করা হলো handler-এর ভেতরে! (Handler expects a contract for service)
+productHandler := productHandler.NewHandler(productSvc)
+
+
+কীভাবে নিশ্চিত হবেন যে rest/.../port.go হলো সার্ভিসের চুক্তি এবং services/.../port.go হলো রিপোজিটরির চুক্তি?
+নিচে কোড স্নিপেটসহ ৩টি অকাট্য প্রমাণ (3 Definite Proofs) দেওয়া হলো:
+
+
+--------------------------------------------------------------------------------------------
+প্রমাণ ১: cmd/serve.go-এর ডিপেন্ডেন্সি ইনজেকশন ও ওয়্যারিং (Wiring Proof)
+--------------------------------------------------------------------------------------------
+কোড স্নিপেট (cmd/serve.go):
+   productRepo := repo.NewProductRepo(dbCon)
+   productSvc := srvProduct.NewService(productRepo)        // <-- repo পাস হচ্ছে service-এ
+   productHandler := productHandler.NewHandler(productSvc) // <-- service পাস হচ্ছে handler-এ
+
+ব্যাখ্যা:
+- productHandler.NewHandler() কিন্তু কোনো কংক্রিট স্ট্রাক্ট (*service) চায় না; সে চায় rest/handlers/product/port.go-এর 'Service' ইন্টারফেস।
+- যদি services/product/service.go এই চুক্তি পূরণ না করতো, তবে Go কম্পাইলার সাথে সাথে এরর দিত:
+  ❌ "cannot use productSvc (variable of type *service) as productHandler.Service value in argument to productHandler.NewHandler"
+- একইভাবে, srvProduct.NewService() চায় services/product/port.go-এর 'ProductRepo' ইন্টারফেস।
+- যদি repo/product.go চুক্তি পূরণ না করতো, তবে Go কম্পাইলার বলতো:
+  ❌ "cannot use productRepo (variable of type *productRepo) as ProductRepo value in argument to srvProduct.NewService"
+- যেহেতু কোড কোনো এরর ছাড়াই সফলভাবে কম্পাইল হচ্ছে, এটি নিশ্চিত প্রমাণ যে উভয় স্ট্রাক্ট তাদের নিজ নিজ চুক্তি পূরণ করেছে।
+
+
+--------------------------------------------------------------------------------------------
+প্রমাণ ২: কোডে সরাসরি ইমপোর্ট ও এম্বেডিং (Explicit Code Embedding Proof)
+--------------------------------------------------------------------------------------------
+কোড স্নিপেট ১ (services/product/port.go):
+   import productHandler "ecom-project-improved/rest/handlers/product"
+
+   type Service interface {
+       productHandler.Service // <-- হ্যান্ডলারের port.go ইন্টারফেসটি সরাসরি এম্বেড করা হয়েছে!
+   }
+
+কোড স্নিপেট ২ (repo/product.go):
+   import srvProduct "ecom-project-improved/services/product"
+
+   type ProductRepo interface {
+       srvProduct.ProductRepo // <-- সার্ভিসের port.go ইন্টারফেসটি সরাসরি এম্বেড করা হয়েছে!
+   }
+
+ব্যাখ্যা:
+- services সরাসরি হ্যান্ডলারের চুক্তিকে এবং repo সরাসরি সার্ভিসের চুক্তিকে তাদের নিজস্ব ইন্টারফেসে এম্বেড করে রেখেছে।
+
+
+--------------------------------------------------------------------------------------------
+প্রমাণ ৩: মেথড সিগনেচারের হুবহু মিল (Duck Typing / Signature Match Proof)
+--------------------------------------------------------------------------------------------
+Go ভাষায় কোনো 'implements' কিওয়ার্ড নেই। মেথডের নাম, ইনপুট প্যারামিটার ও রিটার্ন টাইপ হুবহু মিললেই Go ধরে নেয় চুক্তি পূরণ হয়েছে।
+
+ম্যাচিং ১ (Handler <-> Service):
+   [চুক্তি : rest/handlers/product/port.go]
+   Create(p domain.Product) (*domain.Product, error)
+         ↕ (হুবহু এক)
+   [বাস্তবায়ন : services/product/service.go]
+   func (svc *service) Create(p domain.Product) (*domain.Product, error)
+
+ম্যাচিং ২ (Service <-> Repo):
+   [চুক্তি : services/product/port.go]
+   Create(p domain.Product) (*domain.Product, error)
+         ↕ (হুবহু এক)
+   [বাস্তবায়ন : repo/product.go]
+   func (r *productRepo) Create(p domain.Product) (*domain.Product, error)
+
+
+============================================================================================
+                        সারসংক্ষেপ ম্যাপিং (Contract & Implementer Map)
+============================================================================================
+- চুক্তি ১ (Handler -> Service):
+  • Interface / Port : rest/handlers/product/port.go -> type Service interface
+  • Implementer      : services/product/service.go   -> type service struct
+
+- চুক্তি ২ (Service -> Repo):
+  • Interface / Port : services/product/port.go      -> type ProductRepo interface
+  • Implementer      : repo/product.go               -> type productRepo struct
 */
