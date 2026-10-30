@@ -7,13 +7,14 @@ type service struct {
 }
 
 // Child(service) must need to implement all methods from parent(Service) if he want to return Service
+// input-> productRepo , return Handler Service. [receive data from repo and return to parent Handler Service]
 func NewService(productRepo ProductRepo) Service { // parent Service [port.go]
 	return &service{ // child returning parent's parent [Service]
 		productRepo: productRepo,
 	}
 }
 
-// Child (service) implementing all the methods of parent(port.go/Service) so that it can return Service [same signature]
+// Child (service) implementing all the methods of parent(port.go/Service == handler/product/port.go) so that it can return Service [same signature]
 func (svc *service) Create(p domain.Product) (*domain.Product, error) {
 	prd, err := svc.productRepo.Create(p)
 	if err != nil {
