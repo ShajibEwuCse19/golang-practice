@@ -6,7 +6,8 @@ import (
 	"net/http"
 )
 
-func SendData(w http.ResponseWriter, data interface{}, statusCode int) { // data interface{} - it can take any type of data (int, float, struct, list etc).
+// SendData sets the HTTP status code and serializes data as JSON to the response writer.
+func SendData(w http.ResponseWriter, data interface{}, statusCode int) {
 	w.WriteHeader(statusCode)
 	fmt.Fprintln(w, "Your response: ")
 

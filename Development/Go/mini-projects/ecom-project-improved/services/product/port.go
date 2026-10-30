@@ -9,8 +9,8 @@ type Service interface {
 	productHandler.Service
 }
 
-// independent ProductRepo ports [contract] -> repository implements this interface with same signatures
-// so that we can pass that in constructor creationg in serve.go as implementation purpose. 
+// ProductRepo defines the storage contract that the repository layer must implement.
+// This decouples the business logic service from database implementation details.
 type ProductRepo interface {
 	Create(p domain.Product) (*domain.Product, error)
 	Get(id uint8) (*domain.Product, error)

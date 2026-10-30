@@ -7,14 +7,16 @@ import (
 	"github.com/jmoiron/sqlx"
 )
 
+// UserRepo interface embeds the contract defined in services/user/port.go.
 type UserRepo interface {
-	srvUser.UserRepo //Embedding Interface
+	srvUser.UserRepo
 }
 
 type userRepo struct {
 	db *sqlx.DB
 }
 
+// NewUserRepo initializes and returns an implementation of the UserRepo interface.
 func NewUserRepo(db *sqlx.DB) UserRepo {
 	return &userRepo{
 		db: db,
@@ -39,7 +41,7 @@ func (r *userRepo) Create(user domain.User) (*domain.User, error) {
 		RETURNING id
 	`
 
-	// Executer named query
+	// Execute named query
 	rows, err := r.db.NamedQuery(query, user)
 	if err != nil {
 		return nil, err

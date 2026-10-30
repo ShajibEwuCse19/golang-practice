@@ -11,13 +11,13 @@ import (
 )
 
 type Server struct {
-	//dependency
+	// Server dependencies
 	productHandler *product.Handler
 	userHandler    *user.Handler
 	config         *config.Config
 }
 
-// inject the server's dependencies
+// NewServer injects dependencies into the Server instance.
 func NewServer(
 	productHandler *product.Handler,
 	userHandler *user.Handler,
@@ -31,26 +31,24 @@ func NewServer(
 }
 
 func (server *Server) StartServer() {
-	manager := middleware.NewManager() // create a new manager instance where initialized with an empty slice of global middlewares
+	manager := middleware.NewManager() // Initialize middleware manager
 	manager.AppendGlobalMiddlewares(
 		middleware.Cors,
 		middleware.Preflight,
 		middleware.Logger,
-	) // store all the common/global middlewares here
+	) // Register common global middlewares executed on every request
 
-	mux := http.NewServeMux() // router (multiplexer)
-	// here mux directly bind with server. So, when server get Preflight request (OPTIONS), it will directly call handler.
-	// As, OPTION method has no handler, it will reject the request and browser will show Preflight error.
-	// err := http.ListenAndServe(":8080", mux) // starts the server on port 3010 and listen for incoming requests.
+	mux := http.NewServeMux() // HTTP router (multiplexer)
 
-	// Here is the solution of the problem: Cors(Preflight(Logger(mux)))
-	wrapperMux := manager.WrapMuxWithGlobalMiddleware(mux) // added mux with mw before server connection
+	// Wrap mux router with global middlewares in proper execution order: Cors -> Preflight -> Logger -> Handler
+	wrapperMux := manager.WrapMuxWithGlobalMiddleware(mux)
 
-	//init routes -> mux for for handler and manager for if we need to add middleware in any handler specific. 
+	// Initialize routes: registers handlers on the mux router with route-specific middlewares
 	server.productHandler.RegisterRoutes(mux, manager)
 	server.userHandler.RegisterRoutes(mux, manager)
 
-	err := http.ListenAndServe(":"+strconv.Itoa(server.config.HttpPort), wrapperMux) // bind the server port 8080 with wrapperMux[CorsWithPreflight(Logger(mux))]
+	// Start listening for incoming HTTP requests on configured port
+	err := http.ListenAndServe(":"+strconv.Itoa(server.config.HttpPort), wrapperMux)
 	if err != nil {
 		fmt.Println("Error starting the server", err)
 	}

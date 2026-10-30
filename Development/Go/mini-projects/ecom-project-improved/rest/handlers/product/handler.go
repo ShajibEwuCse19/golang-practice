@@ -1,11 +1,11 @@
 package product
 
+// Handler handles HTTP requests for products and depends on the Service contract.
 type Handler struct {
-	svc Service // own contract -> rest/handlers/product/port.go
+	svc Service // Local Service interface contract defined in port.go
 }
 
-// During constructor create in serve.go, using same signature as own contract which is services/service.go
-// services/service.go has implementation which produce data for handler/port.go contract list. 
+// NewHandler initializes a new Handler with the provided Service implementation.
 func NewHandler(svc Service) *Handler { 
 	return &Handler{
 		svc: svc,

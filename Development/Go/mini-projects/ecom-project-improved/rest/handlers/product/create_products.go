@@ -23,7 +23,7 @@ func (h *Handler) CreateProduct(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	createdProduct, err := h.svc.Create(domain.Product{ // call method from own contract service
+	createdProduct, err := h.svc.Create(domain.Product{ // Map request DTO to domain model and call service contract
 		Title: reqProduct.Title,
 		Description: reqProduct.Description,
 		Price: reqProduct.Price,

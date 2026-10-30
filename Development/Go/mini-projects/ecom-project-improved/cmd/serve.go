@@ -45,7 +45,7 @@ func Serve() {
 	// - Why needed: To hold core business logic, rules, and validations (e.g., password hashing, business checks).
 	// - Why pass userRepo or productRepo: The service layer manages business rules but does NOT write raw SQL.
 	//   It delegates data saving/fetching to the repo interface.
-	userSvc := srvUser.NewService(userRepo)
+	userSvc := srvUser.NewService(userRepo) // service has a own contract list which signature is same as Repo implementation
 	productSvc := srvProduct.NewService(productRepo)
 
 	// 3. HANDLERS (HTTP Controllers):
@@ -54,7 +54,7 @@ func Serve() {
 	//   h.svc.Login(...) in login.go).
 	// - Why pass userSvc or productSvc: Handlers must 'NOT talk to databases or perform business logic directly'.
 	//   Once a valid HTTP request is parsed, the handler calls the service to execute the actual business operation.
-	userHandler := userHandler.NewHandler(userSvc)
+	userHandler := userHandler.NewHandler(userSvc) // handler has a own contract list which singature is similar to services/service
 	productHandler := productHandler.NewHandler(productSvc)
 
 	// 4. SERVER:
