@@ -2,31 +2,29 @@ package repo
 
 import (
 	"ecom-project-improved/domain"
-	"ecom-project-improved/product"
+	srvProduct "ecom-project-improved/services/product"
 	"github.com/jmoiron/sqlx"
 )
 
-// ProductRepo interface
-// Parent port.go [contract] will provide signatures using embeddig
+// ProductRepo interface embeds the contract defined in services/product/port.go.
 type ProductRepo interface {
-	product.ProductRepo // embedding with parent
+	srvProduct.ProductRepo
 }
 
-// this dependency is for create client [connect with postgres db]
+// productRepo holds the live PostgreSQL database connection handle (*sqlx.DB).
 type productRepo struct {
 	db *sqlx.DB
 }
 
-// This is a constructor whice initialize/create an object of productRepo
-// repo (productRepo) is a Child of ProductRepo interface
-func NewProductRepo(db *sqlx.DB) ProductRepo { //returning parent [product.ProductRepo], So, must need to implements all methods from interface, then productRepo == ProductRepo
-	repo := &productRepo{ // initialize child
-		db: db, // inject postgres db
+// NewProductRepo initializes and returns an implementation of the ProductRepo interface.
+func NewProductRepo(db *sqlx.DB) ProductRepo {
+	repo := &productRepo{
+		db: db,
 	}
 	return repo
 }
 
-// Accoding to parent [port.go contract], child Implemnet ProductRepo interface [Create, Update, List, Get, Delete]
+// Create inserts a new product into PostgreSQL and returns the created product with its generated ID.
 func (r *productRepo) Create(p domain.Product) (*domain.Product, error) {
 	query := `
 	INSERT INTO products (
@@ -44,7 +42,7 @@ func (r *productRepo) Create(p domain.Product) (*domain.Product, error) {
 	RETURNING id
 	`
 
-	// Executer named query
+	// Execute named query
 	rows, err := r.db.NamedQuery(query, p)
 	if err != nil {
 		return nil, err

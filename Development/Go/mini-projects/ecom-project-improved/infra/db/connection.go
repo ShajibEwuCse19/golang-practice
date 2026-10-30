@@ -8,14 +8,15 @@ import (
 	_ "github.com/lib/pq"
 )
 
-func NewConnection(config *config.Config) (*sqlx.DB, error) { // *sqlx.DB => connection client
+// NewConnection establishes a connection pool to PostgreSQL using sqlx.
+func NewConnection(config *config.Config) (*sqlx.DB, error) {
 	dbSource := GetConnectionString(config)
-	dbConnection, err := sqlx.Connect("postgres", dbSource) //there are different driver name for different db. here we are using postgres driver
+	dbConnection, err := sqlx.Connect("postgres", dbSource) // Connect using PostgreSQL driver (lib/pq)
 	if err != nil {
 		fmt.Println(err)
 		return nil, err
 	}
-	return dbConnection, nil // here, dbConnection is client.
+	return dbConnection, nil
 }
 
 func GetConnectionString(dbConfig *config.Config) string {

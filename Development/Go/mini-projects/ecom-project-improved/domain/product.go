@@ -1,6 +1,6 @@
 package domain
 
-// model or entity (existence of data - business rule logic ) - common for all other layers
+// Product represents the core domain model/entity for products across all layers.
 type Product struct {
 	ID          uint8   `json:"id" db:"id"`
 	Title       string  `json:"title" db:"title"`

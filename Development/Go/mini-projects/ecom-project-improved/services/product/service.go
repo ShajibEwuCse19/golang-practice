@@ -1,4 +1,4 @@
-package product
+package services
 
 import "ecom-project-improved/domain"
 
@@ -6,14 +6,15 @@ type service struct {
 	productRepo ProductRepo
 }
 
-// Child(service) must need to implement all methods from parent(Service) if he want to return Service
-func NewService(productRepo ProductRepo) Service { // parent Service [port.go]
-	return &service{ // child returning parent's parent [Service]
+// NewService initializes a new product service with its repository dependency.
+// It returns the Service interface defined in services/product/port.go.
+func NewService(productRepo ProductRepo) Service {
+	return &service{
 		productRepo: productRepo,
 	}
 }
 
-// Child (service) implementing all the methods of parent(port.go/Service) so that it can return Service [same signature]
+// The service struct implements all methods of the Service interface.
 func (svc *service) Create(p domain.Product) (*domain.Product, error) {
 	prd, err := svc.productRepo.Create(p)
 	if err != nil {

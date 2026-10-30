@@ -1,6 +1,6 @@
 package domain
 
-// model or entity (existence of data - business rule logic ) - common for all other layers
+// User represents the core domain model/entity for users across all layers.
 type User struct {
 	ID          uint8  `json:"id" db:"id"`
 	FirstName   string `json:"first_name" db:"first_name"`
