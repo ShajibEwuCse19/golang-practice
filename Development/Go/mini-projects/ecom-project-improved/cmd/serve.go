@@ -156,4 +156,26 @@ func Serve() {
 - Repo ডাটাবেজ থেকে পাওয়া নতুন ID-টি মডেলে স্ক্যান করে Service-এ পাঠায়।
 - Service কোনো পরিবর্তন বা ভ্যালিডেশন শেষে অবজেক্টটি Handler-এ পাঠায়।
 - Handler তখন utils.SendData() ব্যবহার করে Content-Type: application/json এবং HTTP 201 StatusCreated কোড সহ ক্লায়েন্টকে JSON রেসপন্স পাঠিয়ে রিকোয়েস্ট সম্পন্ন করে।
+
+============================================================================================
+                               Quick Summary of Core Layers
+============================================================================================
+
+Note: /rest, /services, /repo, and /domain are the core architectural layers. 
+Other directories (cmd, config, infra, utils) are for bootstrapping, configuration, and utilities.
+
+Forward Flow (Request):
+1. /rest      -> Receives HTTP requests, runs middlewares (CORS, JWT auth, logger), matches routes, 
+                 extracts & decodes r.Body, maps DTO to the core domain model, and calls /services.
+2. /services  -> Core business logic layer. Validates business rules, processes data, 
+                 and calls the /repo interface dependency.
+3. /repo      -> Data access layer. Executes raw SQL queries against the live database (*sqlx.DB) 
+                 and persists/fetches data.
+
+Backward Flow (Response):
+4. /repo      -> Scans database records/IDs into the domain model and returns the output (or error) back to /services.
+5. /services  -> Receives the output from /repo, performs any post-processing or business validation, 
+                 and returns the final result back to /rest.
+6. /rest      -> Receives the result from /services, sets the appropriate HTTP status code (201, 400, 500), 
+                 sets response headers (application/json), and serializes the JSON response to the client.
 */
